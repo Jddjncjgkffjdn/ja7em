@@ -108,14 +108,14 @@
 
       <!-- Section Anchors -->
       <nav class="hidden md:flex items-center gap-1 text-xs font-extrabold">
-        <a href="#live-server" class="px-3.5 py-2 rounded-xl text-zinc-300 hover:text-[#00f5d4] hover:bg-white/5 transition" data-ar="// سيرفر IDEV | أي ديف" data-en="// IDEV Server">// سيرفر IDEV | أي ديف</a>
         <a href="#services" class="px-3.5 py-2 rounded-xl text-zinc-300 hover:text-[#00f5d4] hover:bg-white/5 transition" data-ar="// الخدمات البرمجية" data-en="// Services">// الخدمات البرمجية</a>
         <a href="#projects" class="px-3.5 py-2 rounded-xl text-zinc-300 hover:text-[#00f5d4] hover:bg-white/5 transition" data-ar="// المشاريع الحية" data-en="// Projects">// المشاريع الحية</a>
         <a href="#configurator" class="px-3.5 py-2 rounded-xl text-zinc-300 hover:text-[#00f5d4] hover:bg-white/5 transition" data-ar="// صمّم مشروعك" data-en="// Build Order">// صمّم مشروعك</a>
         <a href="#reviews" class="px-3.5 py-2 rounded-xl text-zinc-300 hover:text-[#00f5d4] hover:bg-white/5 transition" data-ar="// التقييمات" data-en="// Vouches">// التقييمات</a>
+        <a href="#contact" class="px-3.5 py-2 rounded-xl text-zinc-300 hover:text-[#00f5d4] hover:bg-white/5 transition" data-ar="// التواصل" data-en="// Contact">// التواصل</a>
       </nav>
 
-      <!-- Actions: Owner Dashboard (Hidden Except Owner 853351545013272596) + Sound + Lang + Live Discord -->
+      <!-- Actions: Owner Dashboard (Hidden Except Owner 853351545013272596) + Sound + Lang -->
       <div class="flex items-center gap-2">
         <button id="ownerDashboardBtn" onclick="openOwnerDeck()" title="Idev Owner Dashboard"
           class="hidden h-9 px-3 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-400/50 items-center gap-1.5 text-amber-300 font-mono-code text-xs font-extrabold transition">
@@ -132,16 +132,8 @@
           EN
         </button>
 
-        <!-- Live Discord Status Pill -->
-        <a href="#contact" class="flex items-center gap-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl py-1.5 px-3 transition">
-          <div class="relative w-7 h-7 rounded-full overflow-hidden bg-zinc-900 border border-[#00f5d4]/50 flex items-center justify-center">
-            <img id="navAvatarImg" src="" alt="Idev" class="hidden w-full h-full object-cover" />
-            <span id="navAvatarFallback" class="font-mono-code text-[10px] font-black text-[#00f5d4]">ID</span>
-          </div>
-          <div class="hidden sm:flex items-center gap-1.5 text-xs font-bold">
-            <span id="navStatusDot" class="w-2 h-2 rounded-full bg-zinc-500"></span>
-            <span id="navStatusText" class="text-zinc-300" data-ar="غير متصل" data-en="Offline">غير متصل</span>
-          </div>
+        <a href="#contact" class="h-9 px-3.5 rounded-xl bg-[#00f5d4]/10 hover:bg-[#00f5d4]/20 border border-[#00f5d4]/40 flex items-center gap-2 text-xs font-extrabold text-[#00f5d4] transition" data-ar="تواصل معنا" data-en="Contact">
+          تواصل معنا
         </a>
       </div>
     </div>
@@ -405,36 +397,25 @@
       <div class="lg:col-span-5 space-y-4">
         <div class="cyber-card p-5 flex items-center justify-between gap-4">
           <div class="flex items-center gap-3.5">
-            <div class="relative w-16 h-16 rounded-2xl p-[2px] bg-gradient-to-tr from-[#00f5d4] to-[#8b5cf6] shrink-0">
-              <div class="w-full h-full rounded-[14px] bg-[#06080d] flex items-center justify-center overflow-hidden">
-                <img id="heroAvatarImg" src="" alt="Idev" class="hidden w-full h-full object-cover" />
-                <span id="heroAvatarFallback" class="font-mono-code text-lg font-black text-[#00f5d4]">ID</span>
+            <div class="relative w-16 h-16 rounded-2xl p-[2px] bg-gradient-to-tr from-[#00f5d4] to-[#8b5cf6] shrink-0 flex items-center justify-center">
+              <div class="w-full h-full rounded-[14px] bg-[#06080d] flex items-center justify-center">
+                <span class="font-mono-code text-lg font-black text-[#00f5d4]">ID</span>
               </div>
-              <span id="heroStatusDot" class="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-zinc-500 border-[3px] border-[#090b10]"></span>
             </div>
             <div class="text-start">
               <div class="flex items-center gap-2">
-            <div class="relative w-16 h-16 rounded-2xl p-[2px] bg-gradient-to-tr from-[#00f5d4] to-[#8b5cf6] shrink-0">
-              <div class="w-full h-full rounded-[14px] bg-[#06080d] flex items-center justify-center overflow-hidden">
-                <img id="heroAvatarImg" src="" alt="IDEV | أي ديف" class="hidden w-full h-full object-cover" />
-                <span id="heroAvatarFallback" class="font-mono-code text-lg font-black text-[#00f5d4]">ID</span>
-              </div>
-              <span id="heroStatusDot" class="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-zinc-500 border-[3px] border-[#090b10]"></span>
-            </div>
-            <div class="text-start">
-              <div class="flex items-center gap-2">
-                <h2 id="heroOwnerName" class="font-black text-white text-lg">IDEV | أي ديف</h2>
+                <h2 class="font-black text-white text-lg">IDEV | أي ديف</h2>
                 <span class="font-mono-code text-[10px] px-2 py-0.5 rounded bg-[#00f5d4]/15 text-[#00f5d4] font-bold">FOUNDER</span>
               </div>
-              <p id="heroStatusText" class="text-xs font-bold text-zinc-400 mt-0.5" data-ar="غير متصل الآن" data-en="Offline Now">غير متصل الآن</p>
+              <p class="text-xs font-bold text-zinc-400 mt-0.5" data-ar="هندسة البوتات والألعاب" data-en="Bots & Games Studio">هندسة البوتات والألعاب</p>
               <button onclick="copyText('853351545013272596')" class="font-mono-code text-[11px] text-zinc-500 hover:text-[#00f5d4] mt-1 block transition" dir="ltr">
                 ID: 853351545013272596 📋
               </button>
             </div>
           </div>
           <div class="text-center px-3 py-2 rounded-xl bg-white/5 border border-white/10">
-            <div class="font-mono-code text-lg font-black text-[#00f5d4]">0</div>
-            <div class="text-[10px] text-zinc-400 font-bold" data-ar="بداية جديدة" data-en="Fresh Start">بداية جديدة</div>
+            <div class="font-mono-code text-sm font-black text-[#00f5d4]">100%</div>
+            <div class="text-[10px] text-zinc-400 font-bold" data-ar="سورس كود" data-en="Source Code">سورس كود</div>
           </div>
         </div>
 
@@ -457,81 +438,6 @@
             <div class="text-zinc-400">[OK] 2D/3D WebGL Game Engine initialized.</div>
             <div class="text-zinc-400">[OK] Source Code Delivery & 24/7 Support active.</div>
             <div class="text-amber-300">Ready for your custom bot or game order...</div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ======================================================================
-         1.5 LIVE DISCORD SERVER TELEMETRY (#live-server)
-    ====================================================================== -->
-    <section id="live-server" class="cyber-card p-6 sm:p-8 border-[#00f5d4]/30 space-y-6">
-      <div class="flex flex-wrap items-center justify-between gap-4 border-b border-white/10 pb-4">
-        <div class="flex items-center gap-3.5 text-start">
-          <div class="w-12 h-12 rounded-2xl bg-[#5865F2]/15 border border-[#5865F2]/40 flex items-center justify-center overflow-hidden shrink-0">
-            <img id="srvIconImg" src="" alt="IDEV | أي ديف" class="hidden w-full h-full object-cover" />
-            <span id="srvIconFallback" class="text-2xl">🛡️</span>
-          </div>
-          <div>
-            <div class="flex items-center gap-2">
-              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-              <span class="font-mono-code text-[11px] text-[#00f5d4] font-bold" dir="ltr">LIVE IDEV SERVER TELEMETRY</span>
-            </div>
-            <h2 id="srvNameDisplay" class="text-xl sm:text-2xl font-black text-white mt-0.5">IDEV | أي ديف</h2>
-          </div>
-        </div>
-
-        <div class="flex flex-wrap items-center gap-2.5">
-          <a href="https://discord.gg/9ta4Wpdmk" target="_blank" rel="noopener noreferrer" class="px-4 py-2 rounded-xl bg-[#5865F2] hover:bg-[#4752C4] text-white font-black text-xs shadow-lg shadow-[#5865F2]/25 transition">
-            انضم إلى سيرفر IDEV 🚀
-          </a>
-          <button onclick="fetchLiveServerStats(true)" class="px-3.5 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-bold text-zinc-300 transition">
-            تحديث البيانات 🔄
-          </button>
-        </div>
-      </div>
-
-      <!-- 4 Live Counters -->
-      <div class="grid grid-cols-2 lg:grid-cols-4 gap-3.5 text-start">
-        <div class="bg-[#06080d] border border-white/10 rounded-2xl p-4">
-          <div class="text-xs text-zinc-400 font-bold">👥 إجمالي أعضاء IDEV</div>
-          <div id="statTotalMembers" class="font-mono-code text-2xl sm:text-3xl font-black text-white mt-1">--</div>
-        </div>
-        <div class="bg-[#06080d] border border-emerald-500/30 rounded-2xl p-4">
-          <div class="text-xs text-emerald-400 font-bold">🟢 المتصلون الآن (Online)</div>
-          <div id="statOnlineMembers" class="font-mono-code text-2xl sm:text-3xl font-black text-emerald-400 mt-1">--</div>
-        </div>
-        <div class="bg-[#06080d] border border-[#00f5d4]/30 rounded-2xl p-4">
-          <div class="text-xs text-[#00f5d4] font-bold">🎙️ داخل الفويس حالياً</div>
-          <div id="statVoiceMembers" class="font-mono-code text-2xl sm:text-3xl font-black text-[#00f5d4] mt-1">--</div>
-        </div>
-        <div class="bg-[#06080d] border border-purple-500/30 rounded-2xl p-4">
-          <div class="text-xs text-purple-300 font-bold">💬 عدد رومات IDEV</div>
-          <div id="statTotalChannels" class="font-mono-code text-2xl sm:text-3xl font-black text-purple-300 mt-1">--</div>
-        </div>
-      </div>
-
-      <!-- Online Members & Active Voice List -->
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 text-start">
-        <!-- Who is Online -->
-        <div class="lg:col-span-7 bg-[#06080d] border border-white/10 rounded-2xl p-4 space-y-3">
-          <div class="flex items-center justify-between">
-            <strong class="text-xs sm:text-sm text-white">🟢 الأعضاء المتصلون حالياً في السيرفر:</strong>
-            <span id="onlineBadgeCount" class="font-mono-code text-[11px] px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 font-bold">0 Online</span>
-          </div>
-          <div id="onlineMembersList" class="flex flex-wrap gap-2 max-h-44 overflow-y-auto pt-1">
-            <span class="text-xs text-zinc-500">جاري جلب قائمة المتصلين...</span>
-          </div>
-        </div>
-
-        <!-- Who is in Voice -->
-        <div class="lg:col-span-5 bg-[#06080d] border border-white/10 rounded-2xl p-4 space-y-3">
-          <div class="flex items-center justify-between">
-            <strong class="text-xs sm:text-sm text-white">🎙️ المتواجدون في الرومات الصوتية:</strong>
-            <span id="voiceBadgeCount" class="font-mono-code text-[11px] px-2.5 py-0.5 rounded-full bg-[#00f5d4]/15 text-[#00f5d4] font-bold">0 In Voice</span>
-          </div>
-          <div id="voiceMembersList" class="space-y-2 max-h-44 overflow-y-auto pt-1">
-            <span class="text-xs text-zinc-500">لا يوجد أعضاء في الفويس حالياً</span>
           </div>
         </div>
       </div>
@@ -691,18 +597,15 @@
       <div class="cyber-card p-6 flex flex-col justify-between text-start">
         <div>
           <div class="w-12 h-12 rounded-2xl bg-[#5865F2]/15 border border-[#5865F2]/40 flex items-center justify-center text-[#5865F2] text-2xl mb-4">💬</div>
-          <h3 class="text-xl font-black text-white">سيرفر وحساب ديسكورد</h3>
-          <p id="contactDiscordTag" onclick="copyText('853351545013272596')" class="font-mono-code text-xs text-zinc-400 hover:text-[#00f5d4] cursor-pointer mt-1" dir="ltr">ID: 853351545013272596 📋</p>
+          <h3 class="text-xl font-black text-white">تواصل ديسكورد المباشر</h3>
+          <p onclick="copyText('853351545013272596')" class="font-mono-code text-xs text-zinc-400 hover:text-[#00f5d4] cursor-pointer mt-1" dir="ltr">ID: 853351545013272596 📋</p>
           <p class="text-xs text-zinc-400 mt-3 leading-relaxed">
-            انضم إلى سيرفرنا الرسمي لمناقشة تفاصيل البوتات والألعاب وفتح تذاكر الطلبات والدعم الفني.
+            تواصل مباشرة مع المطور لمناقشة تفاصيل البوتات والألعاب وفتح طلبات البرمجة والدعم الفني.
           </p>
         </div>
-        <div class="mt-5 grid grid-cols-2 gap-2">
-          <a href="https://discord.gg/9ta4Wpdmk" target="_blank" rel="noopener noreferrer" class="block text-center py-2.5 rounded-xl bg-[#5865F2] hover:bg-[#4752C4] text-white font-extrabold text-xs transition">
-            دخول السيرفر 🛡️
-          </a>
-          <a href="https://discord.com/users/853351545013272596" target="_blank" rel="noopener noreferrer" class="block text-center py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/15 text-white font-extrabold text-xs transition">
-            حساب المطور 👤
+        <div class="mt-5">
+          <a href="https://discord.com/users/853351545013272596" target="_blank" rel="noopener noreferrer" class="block text-center py-2.5 rounded-xl bg-[#5865F2] hover:bg-[#4752C4] text-white font-extrabold text-xs transition">
+            محادثة المطور في ديسكورد 👤
           </a>
         </div>
       </div>
@@ -752,8 +655,6 @@
 
   <script>
     const DISCORD_USER_ID = "853351545013272596";
-    const DISCORD_INVITE_CODE = "9ta4Wpdmk";
-    const DISCORD_INVITE_URL = "https://discord.gg/9ta4Wpdmk";
     const WHATSAPP_NUMBER = "201121020801";
     const DEFAULT_BOT_API_URL = "http://92.118.206.166:30121";
     let currentLang = "ar";
@@ -1260,7 +1161,6 @@
       document.querySelectorAll("[data-ar]").forEach(el => {
         el.textContent = el.getAttribute(`data-${currentLang}`);
       });
-      fetchDiscordRest();
     }
 
     function attachCardSpotlights() {
@@ -1271,98 +1171,6 @@
           card.style.setProperty("--mouse-y", `${e.clientY - rect.top}px`);
         };
       });
-    }
-
-    function updateDiscordUI(data) {
-      if (!data || !data.discord_user) return;
-      const user = data.discord_user;
-      const status = data.discord_status || "offline";
-      const displayName = user.global_name || user.username || "Idev | إي ديف";
-      const usernameTag = user.username ? `@${user.username}` : "";
-
-      const heroName = document.getElementById("heroOwnerName");
-      const contactTag = document.getElementById("contactDiscordTag");
-      if (heroName) heroName.textContent = displayName;
-      if (contactTag) contactTag.textContent = `${displayName} ${usernameTag} (${DISCORD_USER_ID}) 📋`;
-
-      if (user.avatar) {
-        const ext = user.avatar.startsWith("a_") ? "gif" : "png";
-        const avatarUrl = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.${ext}?size=256`;
-
-        const navImg = document.getElementById("navAvatarImg");
-        const navFb = document.getElementById("navAvatarFallback");
-        const heroImg = document.getElementById("heroAvatarImg");
-        const heroFb = document.getElementById("heroAvatarFallback");
-
-        [navImg, heroImg].forEach(img => {
-          if (img && img.src !== avatarUrl) {
-            img.src = avatarUrl;
-            img.onload = () => {
-              img.classList.remove("hidden");
-              if (img === navImg && navFb) navFb.classList.add("hidden");
-              if (img === heroImg && heroFb) heroFb.classList.add("hidden");
-            };
-          }
-        });
-      }
-
-      const map = {
-        online: { ar: "متصل الآن", en: "Online Now", dot: "bg-emerald-500 shadow-[0_0_8px_#22c55e]", color: "text-emerald-400" },
-        idle: { ar: "خامل الآن", en: "Idle", dot: "bg-amber-400 shadow-[0_0_8px_#fbbf24]", color: "text-amber-400" },
-        dnd: { ar: "مشغول الآن", en: "Do Not Disturb", dot: "bg-rose-500 shadow-[0_0_8px_#f43f5e]", color: "text-rose-400" },
-        offline: { ar: "غير متصل الآن", en: "Offline Now", dot: "bg-zinc-500", color: "text-zinc-400" }
-      };
-      const st = map[status] || map.offline;
-
-      const navDot = document.getElementById("navStatusDot");
-      const heroDot = document.getElementById("heroStatusDot");
-      const navTxt = document.getElementById("navStatusText");
-      const heroTxt = document.getElementById("heroStatusText");
-
-      if (navDot) navDot.className = `w-2 h-2 rounded-full ${st.dot}`;
-      if (heroDot) heroDot.className = `absolute -bottom-1 -right-1 w-4 h-4 rounded-full ${st.dot} border-[3px] border-[#090b10]`;
-
-      if (navTxt) {
-        navTxt.textContent = currentLang === "ar" ? st.ar.replace(" الآن", "") : st.en.replace(" Now", "");
-        navTxt.className = st.color;
-      }
-      if (heroTxt) {
-        heroTxt.textContent = currentLang === "ar" ? st.ar : st.en;
-        heroTxt.className = `text-xs font-bold ${st.color} mt-0.5`;
-      }
-    }
-
-    async function fetchDiscordRest() {
-      try {
-        const res = await fetch(`https://api.lanyard.rest/v1/users/${DISCORD_USER_ID}?t=${Date.now()}`);
-        const json = await res.json();
-        if (json && json.success && json.data) updateDiscordUI(json.data);
-      } catch (e) {}
-    }
-
-    function initDiscordSync() {
-      fetchDiscordRest();
-      setInterval(fetchDiscordRest, 20000);
-
-      try {
-        const ws = new WebSocket("wss://api.lanyard.rest/socket");
-        let hbTimer = null;
-        ws.onmessage = (ev) => {
-          const msg = JSON.parse(ev.data);
-          if (msg.op === 1) {
-            ws.send(JSON.stringify({ op: 2, d: { subscribe_to_id: DISCORD_USER_ID } }));
-            hbTimer = setInterval(() => {
-              if (ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify({ op: 3 }));
-            }, msg.d.heartbeat_interval || 30000);
-          } else if (msg.op === 0 && (msg.t === "INIT_STATE" || msg.t === "PRESENCE_UPDATE")) {
-            updateDiscordUI(msg.d);
-          }
-        };
-        ws.onclose = () => {
-          if (hbTimer) clearInterval(hbTimer);
-          setTimeout(initDiscordSync, 5000);
-        };
-      } catch (e) {}
     }
 
     function init3DBackground() {
@@ -1419,193 +1227,13 @@
       animate();
     }
 
-    /* ========================================================================
-       📡 جلب إحصائيات السيرفر الحية (الأعضاء، المتصلين، الفويس، الرومات)
-    ======================================================================== */
-    let lastStatsFingerprint = "";
-    let isFetchingServerStats = false;
-
-    function renderLiveServerData(data, animateOnChange = true) {
-      if (!data || !data.ok) return;
-
-      const fingerprint = JSON.stringify({
-        m: data.memberCount,
-        o: data.onlineCount,
-        v: data.voiceCount,
-        c: data.channelsCount,
-        icon: data.guildIcon || "",
-        onlineIds: (data.onlineMembers || []).map(x => `${x.id}:${x.name}:${x.status}`),
-        voiceIds: (data.voiceMembers || []).map(x => `${x.id}:${x.channelName}`)
-      });
-
-      const changed = fingerprint !== lastStatsFingerprint;
-      if (!changed && !animateOnChange) return;
-      lastStatsFingerprint = fingerprint;
-
-      const flashEl = (el) => {
-        if (!el || !animateOnChange || !changed) return;
-        el.classList.remove("scale-110", "text-[#00f5d4]");
-        void el.offsetWidth;
-        el.classList.add("transition-transform", "duration-300", "scale-110");
-        setTimeout(() => el.classList.remove("scale-110"), 320);
-      };
-
-      const srvNameEl = document.getElementById("srvNameDisplay");
-      const totalEl = document.getElementById("statTotalMembers");
-      const onlineEl = document.getElementById("statOnlineMembers");
-      const voiceEl = document.getElementById("statVoiceMembers");
-      const channelsEl = document.getElementById("statTotalChannels");
-      const onlineBadgeEl = document.getElementById("onlineBadgeCount");
-      const voiceBadgeEl = document.getElementById("voiceBadgeCount");
-
-      if (srvNameEl) srvNameEl.textContent = "IDEV | أي ديف";
-      if (totalEl && totalEl.textContent !== String(data.memberCount ?? 0)) {
-        totalEl.textContent = data.memberCount ?? 0;
-        flashEl(totalEl);
-      }
-      if (onlineEl && onlineEl.textContent !== String(data.onlineCount ?? 0)) {
-        onlineEl.textContent = data.onlineCount ?? 0;
-        flashEl(onlineEl);
-      }
-      if (voiceEl && voiceEl.textContent !== String(data.voiceCount ?? 0)) {
-        voiceEl.textContent = data.voiceCount ?? 0;
-        flashEl(voiceEl);
-      }
-      if (channelsEl && channelsEl.textContent !== String(data.channelsCount ?? 0)) {
-        channelsEl.textContent = data.channelsCount ?? 0;
-        flashEl(channelsEl);
-      }
-
-      if (onlineBadgeEl) onlineBadgeEl.textContent = `${data.onlineCount ?? 0} Online`;
-      if (voiceBadgeEl) voiceBadgeEl.textContent = `${data.voiceCount ?? 0} In Voice`;
-
-      if (data.guildIcon) {
-        const iconImg = document.getElementById("srvIconImg");
-        const iconFb = document.getElementById("srvIconFallback");
-        if (iconImg && iconImg.src !== data.guildIcon) {
-          iconImg.src = data.guildIcon;
-          iconImg.onload = () => {
-            iconImg.classList.remove("hidden");
-            iconFb?.classList.add("hidden");
-          };
-        }
-      }
-
-      const statusColors = {
-        online: "bg-emerald-500 shadow-[0_0_6px_#22c55e]",
-        idle: "bg-amber-400 shadow-[0_0_6px_#fbbf24]",
-        dnd: "bg-rose-500 shadow-[0_0_6px_#f43f5e]"
-      };
-
-      const onlineBox = document.getElementById("onlineMembersList");
-      if (onlineBox) {
-        if (data.onlineMembers && data.onlineMembers.length > 0) {
-          onlineBox.innerHTML = data.onlineMembers.map((m) => `
-            <div class="inline-flex items-center gap-2 bg-white/5 border border-white/10 hover:border-[#00f5d4]/40 rounded-full py-1 px-3 transition">
-              <div class="relative w-5 h-5 rounded-full overflow-hidden shrink-0">
-                <img src="${m.avatar}" alt="${m.name}" class="w-full h-full object-cover" />
-              </div>
-              <span class="w-2 h-2 rounded-full ${statusColors[m.status] || "bg-emerald-500"}"></span>
-              <span class="text-xs font-bold text-zinc-200">${m.name}</span>
-            </div>
-          `).join("");
-        } else {
-          onlineBox.innerHTML = `<span class="text-xs text-zinc-500">لا يوجد أعضاء متصلون حالياً</span>`;
-        }
-      }
-
-      const voiceBox = document.getElementById("voiceMembersList");
-      if (voiceBox) {
-        if (data.voiceMembers && data.voiceMembers.length > 0) {
-          voiceBox.innerHTML = data.voiceMembers.map((v) => `
-            <div class="flex items-center justify-between bg-white/5 border border-[#00f5d4]/25 rounded-xl px-3 py-2 transition">
-              <div class="flex items-center gap-2">
-                <img src="${v.avatar}" alt="${v.name}" class="w-6 h-6 rounded-full object-cover" />
-                <span class="text-xs font-bold text-white">${v.name}</span>
-              </div>
-              <span class="font-mono-code text-[11px] text-[#00f5d4]">🔊 ${v.channelName}</span>
-            </div>
-          `).join("");
-        } else {
-          voiceBox.innerHTML = `<span class="text-xs text-zinc-500">لا يوجد أعضاء في الرومات الصوتية حالياً</span>`;
-        }
-      }
-    }
-
-    async function fetchLiveServerStats(manual = false) {
-      if (isFetchingServerStats && !manual) return;
-      isFetchingServerStats = true;
-
-      const baseUrl = (localStorage.getItem("idev_dash_url") || DEFAULT_BOT_API_URL).trim().replace(/\/+$/, "");
-      const targetUrl = `${baseUrl}/api/public/guild-stats?t=${Date.now()}`;
-      const isHttpsSite = window.location.protocol === "https:" && baseUrl.startsWith("http://");
-      const fetchUrl = isHttpsSite ? `/api/proxy?url=${encodeURIComponent(targetUrl)}` : targetUrl;
-
-      let loadedFromBot = false;
-
-      try {
-        const res = await fetch(fetchUrl, { cache: "no-store" });
-        const data = await res.json();
-        if (data && data.ok) {
-          loadedFromBot = true;
-          renderLiveServerData(data, manual);
-        }
-      } catch (e) {}
-
-      // جلب احتياطي فوري من API ديسكورد الرسمي عبر رابط الدعوة (9ta4Wpdmk) لعرض اسم السيرفر وأيقونته وعدد الأعضاء والمتصلين دائماً
-      if (!loadedFromBot) {
-        try {
-          const invRes = await fetch(`https://discord.com/api/v9/invites/${DISCORD_INVITE_CODE}?with_counts=true&with_expiration=true&t=${Date.now()}`, { cache: "no-store" });
-          const invData = await invRes.json();
-          if (invData && invData.guild) {
-            const fallbackData = {
-              ok: true,
-              guildIcon: invData.guild.icon
-                ? `https://cdn.discordapp.com/icons/${invData.guild.id}/${invData.guild.icon}.png?size=128`
-                : "",
-              memberCount: invData.approximate_member_count ?? "--",
-              onlineCount: invData.approximate_presence_count ?? "--",
-              voiceCount: document.getElementById("statVoiceMembers")?.textContent !== "--"
-                ? Number(document.getElementById("statVoiceMembers").textContent)
-                : 0,
-              channelsCount: document.getElementById("statTotalChannels")?.textContent !== "--"
-                ? Number(document.getElementById("statTotalChannels").textContent)
-                : 33,
-              onlineMembers: [],
-              voiceMembers: []
-            };
-            renderLiveServerData(fallbackData, manual);
-          }
-        } catch (e) {}
-      }
-
-      isFetchingServerStats = false;
-      if (manual) showToast("✅ تم تحديث بيانات السيرفر الحية");
-    }
-
-    // تحديث فوري عند تغير حالة المطور أو عودة المستخدم لتبويب الصفحة
-    const _origUpdateDiscordUI = updateDiscordUI;
-    updateDiscordUI = function(data) {
-      _origUpdateDiscordUI(data);
-      fetchLiveServerStats(false);
-    };
-
-    document.addEventListener("visibilitychange", () => {
-      if (!document.hidden) {
-        fetchLiveServerStats(false);
-      }
-    });
-
     window.onload = function () {
       initOwnerVisibilityGuard();
       renderServices("all");
       updateOrderPreview();
       attachCardSpotlights();
-      initDiscordSync();
-      fetchLiveServerStats(false);
-      setInterval(() => fetchLiveServerStats(false), 6000);
       init3DBackground();
     };
   </script>
 </body>
-</html></selection-tag>
+</html>
