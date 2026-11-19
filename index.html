@@ -108,6 +108,7 @@
 
       <!-- Section Anchors -->
       <nav class="hidden md:flex items-center gap-1 text-xs font-extrabold">
+        <a href="#live-server" class="px-3.5 py-2 rounded-xl text-zinc-300 hover:text-[#00f5d4] hover:bg-white/5 transition" data-ar="// السيرفر المباشر" data-en="// Live Server">// السيرفر المباشر</a>
         <a href="#services" class="px-3.5 py-2 rounded-xl text-zinc-300 hover:text-[#00f5d4] hover:bg-white/5 transition" data-ar="// الخدمات البرمجية" data-en="// Services">// الخدمات البرمجية</a>
         <a href="#projects" class="px-3.5 py-2 rounded-xl text-zinc-300 hover:text-[#00f5d4] hover:bg-white/5 transition" data-ar="// المشاريع الحية" data-en="// Projects">// المشاريع الحية</a>
         <a href="#configurator" class="px-3.5 py-2 rounded-xl text-zinc-300 hover:text-[#00f5d4] hover:bg-white/5 transition" data-ar="// صمّم مشروعك" data-en="// Build Order">// صمّم مشروعك</a>
@@ -453,6 +454,76 @@
     </section>
 
     <!-- ======================================================================
+         1.5 LIVE DISCORD SERVER TELEMETRY (#live-server)
+    ====================================================================== -->
+    <section id="live-server" class="cyber-card p-6 sm:p-8 border-[#00f5d4]/30 space-y-6">
+      <div class="flex flex-wrap items-center justify-between gap-4 border-b border-white/10 pb-4">
+        <div class="flex items-center gap-3.5 text-start">
+          <div class="w-12 h-12 rounded-2xl bg-[#5865F2]/15 border border-[#5865F2]/40 flex items-center justify-center overflow-hidden shrink-0">
+            <img id="srvIconImg" src="" alt="Server" class="hidden w-full h-full object-cover" />
+            <span id="srvIconFallback" class="text-2xl">🛡️</span>
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+              <span class="font-mono-code text-[11px] text-[#00f5d4] font-bold" dir="ltr">LIVE DISCORD SERVER TELEMETRY</span>
+            </div>
+            <h2 id="srvNameDisplay" class="text-xl sm:text-2xl font-black text-white mt-0.5">Idev | إي ديف Community</h2>
+          </div>
+        </div>
+
+        <button onclick="fetchLiveServerStats(true)" class="px-3.5 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-bold text-zinc-300 transition">
+          تحديث البيانات 🔄
+        </button>
+      </div>
+
+      <!-- 4 Live Counters -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-3.5 text-start">
+        <div class="bg-[#06080d] border border-white/10 rounded-2xl p-4">
+          <div class="text-xs text-zinc-400 font-bold">👥 إجمالي الأعضاء</div>
+          <div id="statTotalMembers" class="font-mono-code text-2xl sm:text-3xl font-black text-white mt-1">--</div>
+        </div>
+        <div class="bg-[#06080d] border border-emerald-500/30 rounded-2xl p-4">
+          <div class="text-xs text-emerald-400 font-bold">🟢 المتصلون الآن (Online)</div>
+          <div id="statOnlineMembers" class="font-mono-code text-2xl sm:text-3xl font-black text-emerald-400 mt-1">--</div>
+        </div>
+        <div class="bg-[#06080d] border border-[#00f5d4]/30 rounded-2xl p-4">
+          <div class="text-xs text-[#00f5d4] font-bold">🎙️ داخل الفويس حالياً</div>
+          <div id="statVoiceMembers" class="font-mono-code text-2xl sm:text-3xl font-black text-[#00f5d4] mt-1">--</div>
+        </div>
+        <div class="bg-[#06080d] border border-purple-500/30 rounded-2xl p-4">
+          <div class="text-xs text-purple-300 font-bold">💬 عدد الرومات (Channels)</div>
+          <div id="statTotalChannels" class="font-mono-code text-2xl sm:text-3xl font-black text-purple-300 mt-1">--</div>
+        </div>
+      </div>
+
+      <!-- Online Members & Active Voice List -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 text-start">
+        <!-- Who is Online -->
+        <div class="lg:col-span-7 bg-[#06080d] border border-white/10 rounded-2xl p-4 space-y-3">
+          <div class="flex items-center justify-between">
+            <strong class="text-xs sm:text-sm text-white">🟢 الأعضاء المتصلون حالياً في السيرفر:</strong>
+            <span id="onlineBadgeCount" class="font-mono-code text-[11px] px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 font-bold">0 Online</span>
+          </div>
+          <div id="onlineMembersList" class="flex flex-wrap gap-2 max-h-44 overflow-y-auto pt-1">
+            <span class="text-xs text-zinc-500">جاري جلب قائمة المتصلين...</span>
+          </div>
+        </div>
+
+        <!-- Who is in Voice -->
+        <div class="lg:col-span-5 bg-[#06080d] border border-white/10 rounded-2xl p-4 space-y-3">
+          <div class="flex items-center justify-between">
+            <strong class="text-xs sm:text-sm text-white">🎙️ المتواجدون في الرومات الصوتية:</strong>
+            <span id="voiceBadgeCount" class="font-mono-code text-[11px] px-2.5 py-0.5 rounded-full bg-[#00f5d4]/15 text-[#00f5d4] font-bold">0 In Voice</span>
+          </div>
+          <div id="voiceMembersList" class="space-y-2 max-h-44 overflow-y-auto pt-1">
+            <span class="text-xs text-zinc-500">لا يوجد أعضاء في الفويس حالياً</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
          2. PURE PROGRAMMING & GAME DEV SERVICES (#services)
     ====================================================================== -->
     <section id="services" class="space-y-8">
@@ -663,6 +734,7 @@
   <script>
     const DISCORD_USER_ID = "853351545013272596";
     const WHATSAPP_NUMBER = "201121020801";
+    const DEFAULT_BOT_API_URL = "http://92.118.206.166:30121";
     let currentLang = "ar";
     let soundEnabled = false;
     let ambientSynth = null;
@@ -1326,12 +1398,88 @@
       animate();
     }
 
+    /* ========================================================================
+       📡 جلب إحصائيات السيرفر الحية (الأعضاء، المتصلين، الفويس، الرومات)
+    ======================================================================== */
+    async function fetchLiveServerStats(manual = false) {
+      const baseUrl = (localStorage.getItem("idev_dash_url") || DEFAULT_BOT_API_URL).trim().replace(/\/+$/, "");
+      const targetUrl = `${baseUrl}/api/public/guild-stats`;
+      const isHttpsSite = window.location.protocol === "https:" && baseUrl.startsWith("http://");
+      const fetchUrl = isHttpsSite ? `/api/proxy?url=${encodeURIComponent(targetUrl)}` : targetUrl;
+
+      try {
+        const res = await fetch(fetchUrl);
+        const data = await res.json();
+        if (!data || !data.ok) return;
+
+        document.getElementById("srvNameDisplay").textContent = data.guildName || "Idev | إي ديف";
+        document.getElementById("statTotalMembers").textContent = data.memberCount ?? 0;
+        document.getElementById("statOnlineMembers").textContent = data.onlineCount ?? 0;
+        document.getElementById("statVoiceMembers").textContent = data.voiceCount ?? 0;
+        document.getElementById("statTotalChannels").textContent = data.channelsCount ?? 0;
+        document.getElementById("onlineBadgeCount").textContent = `${data.onlineCount ?? 0} Online`;
+        document.getElementById("voiceBadgeCount").textContent = `${data.voiceCount ?? 0} In Voice`;
+
+        if (data.guildIcon) {
+          const iconImg = document.getElementById("srvIconImg");
+          const iconFb = document.getElementById("srvIconFallback");
+          iconImg.src = data.guildIcon;
+          iconImg.onload = () => {
+            iconImg.classList.remove("hidden");
+            iconFb?.classList.add("hidden");
+          };
+        }
+
+        const statusColors = {
+          online: "bg-emerald-500",
+          idle: "bg-amber-400",
+          dnd: "bg-rose-500"
+        };
+
+        const onlineBox = document.getElementById("onlineMembersList");
+        if (data.onlineMembers && data.onlineMembers.length > 0) {
+          onlineBox.innerHTML = data.onlineMembers.map((m) => `
+            <div class="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-full py-1 px-3">
+              <div class="relative w-5 h-5 rounded-full overflow-hidden shrink-0">
+                <img src="${m.avatar}" alt="${m.name}" class="w-full h-full object-cover" />
+              </div>
+              <span class="w-2 h-2 rounded-full ${statusColors[m.status] || "bg-emerald-500"}"></span>
+              <span class="text-xs font-bold text-zinc-200">${m.name}</span>
+            </div>
+          `).join("");
+        } else {
+          onlineBox.innerHTML = `<span class="text-xs text-zinc-500">لا يوجد أعضاء متصلون حالياً</span>`;
+        }
+
+        const voiceBox = document.getElementById("voiceMembersList");
+        if (data.voiceMembers && data.voiceMembers.length > 0) {
+          voiceBox.innerHTML = data.voiceMembers.map((v) => `
+            <div class="flex items-center justify-between bg-white/5 border border-[#00f5d4]/20 rounded-xl px-3 py-2">
+              <div class="flex items-center gap-2">
+                <img src="${v.avatar}" alt="${v.name}" class="w-6 h-6 rounded-full object-cover" />
+                <span class="text-xs font-bold text-white">${v.name}</span>
+              </div>
+              <span class="font-mono-code text-[11px] text-[#00f5d4]">🔊 ${v.channelName}</span>
+            </div>
+          `).join("");
+        } else {
+          voiceBox.innerHTML = `<span class="text-xs text-zinc-500">لا يوجد أعضاء في الرومات الصوتية حالياً</span>`;
+        }
+
+        if (manual) showToast("✅ تم تحديث إحصائيات السيرفر الحية");
+      } catch (e) {
+        if (manual) showToast("⚠️ تعذر جلب بيانات السيرفر — تأكد من تفعيل Presence Intent في البوت");
+      }
+    }
+
     window.onload = function () {
       initOwnerVisibilityGuard();
       renderServices("all");
       updateOrderPreview();
       attachCardSpotlights();
       initDiscordSync();
+      fetchLiveServerStats(false);
+      setInterval(() => fetchLiveServerStats(false), 30000);
       init3DBackground();
     };
   </script>
