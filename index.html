@@ -149,58 +149,215 @@
   <main id="top" class="max-w-6xl mx-auto px-4 sm:px-6 pt-10 pb-28 space-y-24">
 
     <!-- ======================================================================
-         OWNER-ONLY EMBEDDED DASHBOARD SECTION (Visible Only to 853351545013272596)
+         OWNER-ONLY FULL EMBEDDED DASHBOARD (Visible Only to 853351545013272596)
     ====================================================================== -->
     <section id="ownerDashboardSection" class="hidden cyber-card p-6 sm:p-8 border-amber-400/40 space-y-6">
       <div class="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-4">
         <div class="text-start">
-          <span class="font-mono-code text-xs text-amber-300 font-bold" dir="ltr">// OWNER EXCLUSIVE • ID: 853351545013272596</span>
-          <h2 class="text-2xl sm:text-3xl font-black text-white mt-1">👑 لوحة تحكم البوت المدمجة — Idev | إي ديف</h2>
+          <span class="font-mono-code text-xs text-amber-300 font-bold" dir="ltr">// OWNER EXCLUSIVE FULL CONTROL • ID: 853351545013272596</span>
+          <h2 class="text-2xl sm:text-3xl font-black text-white mt-1">👑 لوحة تحكم البوت الكاملة — Idev | إي ديف</h2>
         </div>
         <button onclick="closeOwnerDeck()" class="px-3.5 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/15 text-xs font-bold text-zinc-300 transition">
           إغلاق اللوحة ✕
         </button>
       </div>
 
+      <!-- Connection / Login Bar -->
       <div id="ownerLoginBox" class="grid grid-cols-1 md:grid-cols-3 gap-3 items-end">
-        <div>
+        <div class="text-start">
           <label class="block text-xs font-bold text-zinc-300 mb-1.5">رابط الداش بورد (Dashboard URL)</label>
           <input id="dashApiUrl" type="text" dir="ltr" placeholder="http://92.118.206.166:30121"
             class="w-full bg-[#06080d] border border-white/15 rounded-xl px-3.5 py-2.5 text-xs font-mono-code text-white outline-none focus:border-[#00f5d4]" />
         </div>
-        <div>
+        <div class="text-start">
           <label class="block text-xs font-bold text-zinc-300 mb-1.5">كلمة مرور لوحة التحكم</label>
           <input id="dashPassInput" type="password" placeholder="SugarAdmin2026"
             class="w-full bg-[#06080d] border border-white/15 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-[#00f5d4]" />
         </div>
         <button onclick="connectOwnerDeck()" class="py-2.5 px-5 rounded-xl bg-[#00f5d4] hover:bg-[#00d9bc] text-black font-black text-xs transition">
-          اتصال وعرض البيانات ⚡
+          اتصال وعرض جميع الأدوات ⚡
         </button>
       </div>
 
-      <div id="ownerDeckData" class="hidden space-y-5">
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <!-- Full Dashboard Workspace -->
+      <div id="ownerDeckData" class="hidden space-y-6">
+        <!-- Top Stats + Server Selector -->
+        <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 items-center">
           <div class="bg-[#06080d] border border-white/10 rounded-2xl p-4 text-start">
-            <div class="text-xs text-zinc-400 font-bold">السيرفرات المتصلة</div>
-            <div id="deckGuildsCount" class="font-mono-code text-2xl font-black text-[#00f5d4] mt-1">0</div>
+            <div class="text-[11px] text-zinc-400 font-bold">السيرفرات النشطة</div>
+            <div id="deckGuildsCount" class="font-mono-code text-2xl font-black text-[#00f5d4] mt-0.5">0</div>
           </div>
           <div class="bg-[#06080d] border border-white/10 rounded-2xl p-4 text-start">
-            <div class="text-xs text-zinc-400 font-bold">أعضاء OAuth2 المحفوظون</div>
-            <div id="deckOauthCount" class="font-mono-code text-2xl font-black text-[#8b5cf6] mt-1">0</div>
+            <div class="text-[11px] text-zinc-400 font-bold">أعضاء OAuth2</div>
+            <div id="deckOauthCount" class="font-mono-code text-2xl font-black text-[#8b5cf6] mt-0.5">0</div>
           </div>
           <div class="bg-[#06080d] border border-white/10 rounded-2xl p-4 text-start">
-            <div class="text-xs text-zinc-400 font-bold">البوت النشط</div>
-            <div id="deckBotTag" class="font-mono-code text-sm font-black text-amber-300 mt-2">IDEV | أي ديف</div>
+            <div class="text-[11px] text-zinc-400 font-bold">البوت المتصل</div>
+            <div id="deckBotTag" class="font-mono-code text-xs font-black text-amber-300 mt-2">IDEV | أي ديف</div>
+          </div>
+          <div class="bg-[#06080d] border border-[#00f5d4]/35 rounded-2xl p-3 text-start">
+            <label class="block text-[11px] text-[#00f5d4] font-bold mb-1">السيرفر المحدد للتحكم:</label>
+            <select id="deckGuildSelect" onchange="connectOwnerDeck(this.value)" class="w-full bg-[#0a0c12] border border-white/15 rounded-xl px-2.5 py-2 text-xs font-bold text-white outline-none"></select>
           </div>
         </div>
 
-        <div class="bg-[#06080d] border border-white/10 rounded-2xl p-4 flex flex-wrap items-center justify-between gap-3">
-          <select id="deckGuildSelect" class="bg-[#0a0c12] border border-white/15 rounded-xl px-3.5 py-2 text-xs font-bold text-white outline-none focus:border-[#00f5d4]"></select>
-          <div class="flex flex-wrap gap-2">
-            <button onclick="runDeckAction('pull_all')" class="px-3.5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black text-xs font-black transition">🚀 سحب الكل OAuth</button>
-            <button onclick="runDeckAction('apply_nick_all')" class="px-3.5 py-2 rounded-xl bg-[#00f5d4] hover:bg-[#00d9bc] text-black text-xs font-black transition">🏷️ تطبيق التاج للجميع</button>
-            <button onclick="runDeckAction('unban_all')" class="px-3.5 py-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-black text-xs font-black transition">🔓 فك حظر الكل</button>
-            <button onclick="openFullDashboardTab()" class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/15 text-white text-xs font-extrabold transition">↗ اللوحة الكاملة</button>
+        <!-- Navigation Tabs -->
+        <div class="flex flex-wrap gap-2 border-b border-white/10 pb-3">
+          <button onclick="switchDeckTab('tab-oauth', this)" class="deck-tab px-3.5 py-2 rounded-xl bg-[#00f5d4] text-black font-black text-xs transition">🔗 OAuth2 Members</button>
+          <button onclick="switchDeckTab('tab-autonick', this)" class="deck-tab px-3.5 py-2 rounded-xl bg-white/5 border border-white/10 text-zinc-300 font-bold text-xs transition">🏷️ Auto Tag & Font</button>
+          <button onclick="switchDeckTab('tab-builder', this)" class="deck-tab px-3.5 py-2 rounded-xl bg-white/5 border border-white/10 text-zinc-300 font-bold text-xs transition">🏗️ Server Builder & Backup</button>
+          <button onclick="switchDeckTab('tab-commands', this)" class="deck-tab px-3.5 py-2 rounded-xl bg-white/5 border border-white/10 text-zinc-300 font-bold text-xs transition">🎛️ Commands Control</button>
+          <button onclick="switchDeckTab('tab-bans', this)" class="deck-tab px-3.5 py-2 rounded-xl bg-white/5 border border-white/10 text-zinc-300 font-bold text-xs transition">🔨 Bans Management</button>
+          <button onclick="switchDeckTab('tab-settings', this)" class="deck-tab px-3.5 py-2 rounded-xl bg-white/5 border border-white/10 text-zinc-300 font-bold text-xs transition">⚙️ Global Settings</button>
+        </div>
+
+        <!-- TAB 1: OAuth2 -->
+        <div id="tab-oauth" class="deck-pane space-y-4 text-start">
+          <div class="bg-[#06080d] border border-white/10 rounded-2xl p-4 space-y-3">
+            <label class="block text-xs font-bold text-zinc-400">رابط التفعيل المباشر (Authorization Link)</label>
+            <div class="flex gap-2">
+              <input id="deckAuthUrl" type="text" readonly dir="ltr" class="w-full bg-[#0a0c12] border border-white/15 rounded-xl px-3 py-2 text-xs font-mono-code text-[#00f5d4]" />
+              <button onclick="copyText(document.getElementById('deckAuthUrl').value)" class="px-4 py-2 rounded-xl bg-[#00f5d4] text-black font-black text-xs shrink-0">نسخ</button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
+              <div>
+                <label class="block text-xs font-bold text-zinc-400 mb-1">رتبة التفعيل (Verified Role)</label>
+                <div class="flex gap-2">
+                  <select id="deckVerRole" class="w-full bg-[#0a0c12] border border-white/15 rounded-xl px-3 py-2 text-xs text-white"></select>
+                  <button onclick="sendDeckCommand('guild_settings', { verifiedRoleId: document.getElementById('deckVerRole').value })" class="px-4 py-2 rounded-xl bg-[#00f5d4] text-black font-black text-xs shrink-0">حفظ</button>
+                </div>
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-zinc-400 mb-1">إرسال بانل التفعيل إلى روم</label>
+                <div class="flex gap-2">
+                  <select id="deckVerChannel" class="w-full bg-[#0a0c12] border border-white/15 rounded-xl px-3 py-2 text-xs text-white"></select>
+                  <button onclick="sendDeckCommand('send_verify_panel', { channelId: document.getElementById('deckVerChannel').value }, false)" class="px-4 py-2 rounded-xl bg-[#5865F2] text-white font-black text-xs shrink-0">إرسال 📨</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-[#06080d] border border-white/10 rounded-2xl p-4 space-y-3">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <strong class="text-sm text-white">الأعضاء المربوطون بنظام OAuth2</strong>
+              <button onclick="sendDeckCommand('oauth_join_all', {}, false)" class="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-black text-xs">🚀 سحب جميع الأعضاء للسيرفر</button>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-xs text-start">
+                <thead class="text-zinc-400 border-b border-white/10">
+                  <tr><th class="py-2">الاسم</th><th class="py-2">ID</th><th class="py-2">التاريخ</th><th class="py-2">الإجراءات</th></tr>
+                </thead>
+                <tbody id="deckOauthTableBody" class="divide-y divide-white/5"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 2: Auto Tag & Font -->
+        <div id="tab-autonick" class="deck-pane hidden space-y-4 text-start">
+          <div class="bg-[#06080d] border border-white/10 rounded-2xl p-5 space-y-4">
+            <div class="flex items-center justify-between border-b border-white/10 pb-3">
+              <div>
+                <strong class="text-sm text-white block">تطبيق الشعار تلقائياً عند دخول عضو جديد</strong>
+                <span class="text-xs text-zinc-400">منح العضو التاج والفونت المختار فور دخوله السيرفر</span>
+              </div>
+              <input id="deckAutoNickCheck" type="checkbox" class="w-5 h-5 accent-[#00f5d4] cursor-pointer" />
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <div>
+                <label class="block text-xs font-bold text-zinc-400 mb-1">بادئة الشعار (Prefix)</label>
+                <input id="deckNickPrefix" type="text" dir="ltr" oninput="updateDeckNickPreview()" class="w-full bg-[#0a0c12] border border-white/15 rounded-xl px-3 py-2 text-xs text-white" />
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-zinc-400 mb-1">نوع الخط (Font Style)</label>
+                <select id="deckNickFont" onchange="updateDeckNickPreview()" class="w-full bg-[#0a0c12] border border-white/15 rounded-xl px-3 py-2 text-xs text-white">
+                  <option value="bold_serif">Bold Serif (𝐈𝐃𝐄𝐕 | 𝐌𝐚𝐫𝐰𝐚𝐧)</option>
+                  <option value="bold_sans">Bold Sans (𝗜𝗗𝗘𝗩 | 𝗠𝗮𝗿𝘄𝗮𝗻)</option>
+                  <option value="italic_bold">Italic Bold (𝑰𝑫𝑬𝑽 | 𝑴𝒂𝒓𝒘𝒂𝒏)</option>
+                  <option value="script">Script (𝓘𝓓𝓔𝓥 | 𝓜𝓪𝓻𝔀𝓪𝓷)</option>
+                  <option value="monospace">Monospace (𝙸𝙳𝙴𝚅 | 𝙼𝚊𝚛𝚠𝚊𝚗)</option>
+                  <option value="small_caps">Small Caps (ɪᴅᴇᴠ | ᴍᴀʀᴡᴀɴ)</option>
+                  <option value="none">Normal (IDEV | Marwan)</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-zinc-400 mb-1">تطبيق الخط على</label>
+                <select id="deckNickTarget" onchange="updateDeckNickPreview()" class="w-full bg-[#0a0c12] border border-white/15 rounded-xl px-3 py-2 text-xs text-white">
+                  <option value="both">الشعار + اسم العضو معاً</option>
+                  <option value="name_only">اسم العضو فقط</option>
+                  <option value="tag_only">الشعار فقط</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="p-3.5 rounded-xl border border-dashed border-[#00f5d4]/50 bg-[#0a0c12] flex items-center justify-between">
+              <span class="text-xs text-zinc-400">معاينة النتيجة (Marwan):</span>
+              <strong id="deckNickPreviewBox" class="text-base text-[#00f5d4]" dir="ltr">𝐈𝐃𝐄𝐕 | 𝐌𝐚𝐫𝐰𝐚𝐧</strong>
+            </div>
+
+            <div class="flex flex-wrap gap-2">
+              <button onclick="saveDeckNickSettings()" class="px-4 py-2.5 rounded-xl bg-[#00f5d4] text-black font-black text-xs">💾 حفظ الإعدادات</button>
+              <button onclick="sendDeckCommand('apply_nick_all', {}, false)" class="px-4 py-2.5 rounded-xl bg-emerald-500 text-black font-black text-xs">✨ تطبيق على جميع الأعضاء الحاليين</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 3: Server Builder & Backup -->
+        <div id="tab-builder" class="deck-pane hidden space-y-4 text-start">
+          <div class="bg-[#06080d] border border-white/10 rounded-2xl p-5 space-y-4">
+            <p class="text-xs text-zinc-300 leading-relaxed">
+              إدارة هيكل السيرفر المحدد: حفظ نسخة احتياطية من الرتب والفئات والرومات، أو مسح السيرفر وبناء قالب <strong>Idev | إي ديف</strong> الرسمي، أو استعادة النسخة المحفوظة بضغطة زر.
+            </p>
+            <div class="flex flex-wrap gap-3">
+              <button onclick="sendDeckCommand('builder_backup', {}, false)" class="px-4 py-2.5 rounded-xl bg-[#5865F2] text-white font-black text-xs">💾 حفظ نسخة احتياطية للسيرفر</button>
+              <button onclick="sendDeckCommand('builder_setup_idev', {}, false)" class="px-4 py-2.5 rounded-xl bg-[#00f5d4] text-black font-black text-xs">🏗️ مسح وبناء قالب Idev | إي ديف</button>
+              <button onclick="sendDeckCommand('builder_restore', {}, false)" class="px-4 py-2.5 rounded-xl bg-emerald-500 text-black font-black text-xs">♻️ استرجاع النسخة المحفوظة</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 4: Commands Control -->
+        <div id="tab-commands" class="deck-pane hidden space-y-3 text-start">
+          <div id="deckCommandsList" class="bg-[#06080d] border border-white/10 rounded-2xl p-4 divide-y divide-white/10"></div>
+        </div>
+
+        <!-- TAB 5: Bans Management -->
+        <div id="tab-bans" class="deck-pane hidden space-y-4 text-start">
+          <div class="bg-[#06080d] border border-white/10 rounded-2xl p-4 space-y-3">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <strong class="text-sm text-white">إدارة الحظر في السيرفر (<span id="deckBansCount">0</span>)</strong>
+              <div class="flex gap-2">
+                <input id="deckBanUserId" type="text" dir="ltr" placeholder="User ID..." class="bg-[#0a0c12] border border-white/15 rounded-xl px-3 py-1.5 text-xs text-white" />
+                <button onclick="sendDeckCommand('ban_user', { userId: document.getElementById('deckBanUserId').value })" class="px-3 py-1.5 rounded-xl bg-rose-600 text-white font-black text-xs">حظر ID</button>
+                <button onclick="sendDeckCommand('unban_all', {})" class="px-3 py-1.5 rounded-xl bg-emerald-500 text-black font-black text-xs">🔓 فك حظر الكل</button>
+              </div>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-xs text-start">
+                <thead class="text-zinc-400 border-b border-white/10">
+                  <tr><th class="py-2">الحساب</th><th class="py-2">ID</th><th class="py-2">السبب</th><th class="py-2">إجراء</th></tr>
+                </thead>
+                <tbody id="deckBansTableBody" class="divide-y divide-white/5"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 6: Global Settings -->
+        <div id="tab-settings" class="deck-pane hidden space-y-4 text-start">
+          <div class="bg-[#06080d] border border-white/10 rounded-2xl p-5 space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-bold text-zinc-400 mb-1">حالة البوت (Bot Status Text)</label>
+                <input id="deckBotStatusInput" type="text" class="w-full bg-[#0a0c12] border border-white/15 rounded-xl px-3 py-2 text-xs text-white" />
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-zinc-400 mb-1">لون الإمبد (Embed Theme Color)</label>
+                <input id="deckThemeColorInput" type="color" class="w-full h-10 bg-transparent cursor-pointer" />
+              </div>
+            </div>
+            <button onclick="sendDeckCommand('global_settings', { bot_status_text: document.getElementById('deckBotStatusInput').value, theme_color: document.getElementById('deckThemeColorInput').value })" class="px-5 py-2.5 rounded-xl bg-[#00f5d4] text-black font-black text-xs">💾 حفظ الإعدادات العامة</button>
           </div>
         </div>
       </div>
@@ -522,127 +679,62 @@
         optionValue: "بوت ديسكورد متكامل (Discord Bot)"
       },
       {
-        category: "bots",
-        icon: "⚔️",
-        badge: "GAMING BOTS",
-        title: "بوتات الألعاب والاقتصاد والـ XP",
-        desc: "برمجة أنظمة مستويات (Levels)، متاجر عملات افتراضية، ألعاب تفاعلية داخل الشات، وتوزيع رتب تلقائية.",
-        optionValue: "بوت ديسكورد متكامل (Discord Bot)"
-      },
-      {
-        category: "web",
-        icon: "🎛️",
-        badge: "FULL-STACK WEB",
-        title: "لوحات تحكم ويب للبوتات (Admin Dashboards)",
-        desc: "تصميم وبرمجة لوحة تحكم ويب خاصة ببوتك للتحكم في الإعدادات والأوامر والأعضاء مباشرة من المتصفح.",
-        optionValue: "بوت ديسكورد + لوحة تحكم ويب (Bot + Dashboard)"
-      },
-      {
-        category: "web",
-        icon: "🔗",
-        badge: "OAUTH2 & SQLITE",
-        title: "أنظمة ربط OAuth2 وقواعد البيانات",
-        desc: "ربط حسابات الأعضاء عبر Discord OAuth2 الرسمي لحفظ بياناتهم وضمهم للسيرفرات الاحتياطية وتفعيل الرتب تلقائياً.",
-        optionValue: "بوت ديسكورد + لوحة تحكم ويب (Bot + Dashboard)"
-      },
-      {
-        category: "games",
-        icon: "🎮",
-        badge: "2D / 3D WEBGL",
-        title: "تطوير وبرمجة الألعاب (2D & 3D Games)",
-        desc: "برمجة ألعاب متصفح وموبايل تفاعلية بمحركات HTML5 Canvas و Three.js مع فيزياء حركية ومؤثرات بصرية قوية.",
-        optionValue: "برمجة لعبة 2D / 3D (Game Development)"
-      },
-      {
-        category: "bots",
-        icon: "⚡",
-        badge: "CUSTOM CODE",
-        title: "تطوير وإصلاح كود البوتات القائمة",
-        desc: "تحديث إصدارات Discord.js، إصلاح الأخطاء البرمجية، تحسين سرعة الاستجابة، وإضافة ميزات جديدة لكودك الحالي.",
-        optionValue: "تعديل أو إصلاح كود بوت قائم (Fix & Upgrade)"
-      }
-    ];
-
-    // إظهار زر لوحة التحكم لك فقط (853351545013272596) وإخفاؤه عن باقي الزوار
-    function initOwnerVisibilityGuard() {
-      const params = new URLSearchParams(window.location.search);
-      const hashStr = window.location.hash.replace(/^#/, "");
-      const hashParams = new URLSearchParams(hashStr.includes("=") ? hashStr : "");
-      const candidate = params.get("owner") || hashParams.get("owner") || sessionStorage.getItem("idev_owner_session");
-      const btn = document.getElementById("ownerDashboardBtn");
-
-      if (candidate === DISCORD_USER_ID) {
-        isOwnerAuthorized = true;
-        sessionStorage.setItem("idev_owner_session", DISCORD_USER_ID);
-        if (btn) {
-          btn.classList.remove("hidden");
-          btn.classList.add("flex");
-        }
-      } else {
-        isOwnerAuthorized = false;
-        if (btn) {
-          btn.classList.add("hidden");
-          btn.classList.remove("flex");
-        }
-        document.getElementById("ownerDashboardSection")?.classList.add("hidden");
-      }
+    function switchDeckTab(tabId, btn) {
+      document.querySelectorAll(".deck-pane").forEach((p) => p.classList.add("hidden"));
+      document.querySelectorAll(".deck-tab").forEach((b) => {
+        b.className = "deck-tab px-3.5 py-2 rounded-xl bg-white/5 border border-white/10 text-zinc-300 font-bold text-xs transition";
+      });
+      document.getElementById(tabId)?.classList.remove("hidden");
+      if (btn) btn.className = "deck-tab px-3.5 py-2 rounded-xl bg-[#00f5d4] text-black font-black text-xs transition";
     }
 
-    function openOwnerDeck() {
-      if (!isOwnerAuthorized) return;
-      const sec = document.getElementById("ownerDashboardSection");
-      const urlInput = document.getElementById("dashApiUrl");
-      if (urlInput && !urlInput.value) {
-        urlInput.value = localStorage.getItem("idev_dash_url") || "http://92.118.206.166:30121";
-      }
-      sec.classList.remove("hidden");
-      sec.scrollIntoView({ behavior: "smooth" });
-      if (sessionStorage.getItem("idev_dash_pass")) {
-        document.getElementById("dashPassInput").value = sessionStorage.getItem("idev_dash_pass");
-        connectOwnerDeck();
-      }
-    }
-
-    function closeOwnerDeck() {
-      document.getElementById("ownerDashboardSection")?.classList.add("hidden");
-    }
-
-    function getDeckBaseUrl() {
-      return (document.getElementById("dashApiUrl")?.value || localStorage.getItem("idev_dash_url") || "").trim().replace(/\/+$/, "");
-    }
-
-    // الاتصال بسيرفر البوت عبر البروكسي الآمن إذا كانت الصفحة HTTPS
-    async function callOwnerApi(endpoint, method = "GET", pass = "", bodyObj = null) {
-      const baseUrl = getDeckBaseUrl();
-      const targetUrl = `${baseUrl}${endpoint}`;
-      const isHttpsMixed = window.location.protocol === "https:" && targetUrl.startsWith("http://");
-      const fetchUrl = isHttpsMixed ? `/api/proxy?url=${encodeURIComponent(targetUrl)}` : targetUrl;
-
-      const options = {
-        method,
-        headers: {
-          "Content-Type": "application/json",
-          "x-owner-token": pass
-        }
+    function styleDeckPreviewText(text, style) {
+      if (!style || style === "none") return text;
+      const maps = {
+        bold_serif: ["𝐀𝐁𝐂𝐃𝐄𝐅𝐆𝐇𝐈𝐉𝐊𝐋𝐌𝐍𝐎𝐏𝐐𝐑𝐒𝐓𝐔𝐕𝐖𝐗𝐘𝐙", "𝐚𝐛𝐜𝐝𝐞𝐟𝐠𝐡𝐢𝐣𝐤𝐥𝐦𝐧𝐨𝐩𝐪𝐫𝐬𝐭𝐮𝐯𝐰𝐱𝐲𝐳", "𝟎𝟏𝟐𝟑𝟒𝟓𝟔𝟕𝟖𝟗"],
+        bold_sans: ["𝗔𝗕𝗖𝗗𝗘𝗙𝗚𝗛𝗜𝗝𝗞𝗟𝗠𝗡𝗢𝗣𝗤𝗥𝗦𝗧𝗨𝗩𝗪𝗫𝗬𝗭", "𝗮𝗯𝗰𝗱𝗲𝗳𝗴𝗵𝗶𝐣𝗸𝗹𝗺𝗻𝗼𝗽𝗾𝗿𝘀𝘁𝘂𝐯𝐰𝐱𝐲𝐳", "𝟬𝟭𝟮𝟯𝟰𝟱𝟲𝟳𝟴𝟵"],
+        italic_bold: ["𝑨𝑩𝑪𝑫𝑬𝑭𝑮𝑯𝑰𝑱𝑲𝑳𝑴𝑵𝑶𝑷𝑸𝑹𝑺𝑻𝑼𝑽𝑾𝑿𝒀𝒁", "𝒂𝒃𝒄𝒅𝒆𝒇𝒈𝒉𝒊𝒋𝒌𝒍𝒎𝒏𝒐𝒑𝒒𝒓𝒔𝒕𝒖𝒗𝒘𝒙𝒚𝒛", "𝟎𝟏𝟐𝟑𝟒𝟓𝟔𝟕𝟖𝟗"],
+        script: ["𝓐𝓑𝓒𝓓𝓔𝓕𝓖𝓗𝓘𝓙𝓚𝓛𝓜𝓝𝓞𝓟𝓠𝓡𝓢𝓣𝓤𝓥𝓦𝓧𝓨𝓩", "𝓪𝓫𝓬𝓭𝓮𝓯𝓰𝓱𝓲𝓳𝓴𝓵𝓶𝓷𝓸𝓹𝓺𝓻𝓼𝓽𝓾𝓿𝔀𝔁𝔂𝔃", "𝟎𝟏𝟐𝟑𝟒𝟓𝟔𝟕𝟖𝟗"],
+        monospace: ["𝙰𝙱𝙲𝙳𝙴𝙵𝙶𝙷𝙸𝙹𝙺𝙻𝙼𝙽𝙾𝙿𝚀𝚁𝚂𝚃𝚄𝚅𝚆𝚇𝚈𝚉", "𝚊𝚋𝚌𝚍𝚎𝚏𝚐𝚑𝚒𝚓𝚔𝚕𝚖𝚗𝚘𝚙𝚚𝚛𝚜𝚝𝚞𝚟𝚠𝚡𝚢𝚣", "𝟶𝟷𝟸𝟹𝟺𝟻𝟼𝟽𝟾𝟿"],
+        small_caps: ["ᴀʙᴄᴅᴇꜰɢʜɪᴊᴋʟᴍɴᴏᴘǫʀꜱᴛᴜᴠᴡxʏᴢ", "ᴀʙᴄᴅᴇꜰɢʜɪᴊᴋʟᴍɴᴏᴘǫʀꜱᴛᴜᴠᴡxʏᴢ", "0123456789"]
       };
-      if (bodyObj) options.body = JSON.stringify(bodyObj);
-
-      const res = await fetch(fetchUrl, options);
-      const data = await res.json();
-      return { res, data };
+      const m = maps[style];
+      if (!m) return text;
+      const U = Array.from(m[0]), L = Array.from(m[1]), D = Array.from(m[2]);
+      return Array.from(text).map((ch) => {
+        const c = ch.charCodeAt(0);
+        if (c >= 65 && c <= 90) return U[c - 65];
+        if (c >= 97 && c <= 122) return L[c - 97];
+        if (c >= 48 && c <= 57) return D[c - 48];
+        return ch;
+      }).join("");
     }
 
-    async function connectOwnerDeck() {
+    function updateDeckNickPreview() {
+      const prefix = document.getElementById("deckNickPrefix")?.value || "";
+      const style = document.getElementById("deckNickFont")?.value || "bold_serif";
+      const target = document.getElementById("deckNickTarget")?.value || "both";
+      const name = "Marwan";
+      let p = prefix, n = name;
+      if (target === "both") { p = styleDeckPreviewText(prefix, style); n = styleDeckPreviewText(name, style); }
+      else if (target === "name_only") { n = styleDeckPreviewText(name, style); }
+      else if (target === "tag_only") { p = styleDeckPreviewText(prefix, style); }
+      const box = document.getElementById("deckNickPreviewBox");
+      if (box) box.textContent = p + n;
+    }
+
+    async function connectOwnerDeck(selectedGuildId = "") {
       if (!isOwnerAuthorized) return;
       const baseUrl = getDeckBaseUrl();
-      const pass = (document.getElementById("dashPassInput")?.value || "").trim();
+      const pass = (document.getElementById("dashPassInput")?.value || sessionStorage.getItem("idev_dash_pass") || "").trim();
       if (!baseUrl || !pass) return showToast("⚠️ أدخل رابط الداش بورد وكلمة المرور");
 
       localStorage.setItem("idev_dash_url", baseUrl);
       sessionStorage.setItem("idev_dash_pass", pass);
 
+      const query = selectedGuildId ? `?guildId=${encodeURIComponent(selectedGuildId)}` : "";
       try {
-        const { res, data } = await callOwnerApi("/api/owner/overview", "GET", pass);
+        const { res, data } = await callOwnerApi(`/api/owner/overview${query}`, "GET", pass);
         if (!res.ok || !data.ok) {
           return showToast(data.message || "❌ فشل التحقق من كلمة المرور أو الصلاحية");
         }
@@ -653,24 +745,89 @@
         document.getElementById("deckBotTag").textContent = data.botTag || "IDEV | أي ديف";
 
         const sel = document.getElementById("deckGuildSelect");
-        sel.innerHTML = (data.guilds || []).map(g => `<option value="${g.id}">${g.name} (${g.memberCount})</option>`).join("");
-        showToast("✅ تم الاتصال بلوحة تحكم البوت بنجاح");
+        sel.innerHTML = (data.guilds || []).map((g) => `<option value="${g.id}" ${g.id === data.activeGuildId ? "selected" : ""}>${g.name} (${g.memberCount})</option>`).join("");
+
+        // Populate OAuth2 Tab
+        document.getElementById("deckAuthUrl").value = data.authUrl || "";
+        const gCfg = data.activeGuildConfig || {};
+        document.getElementById("deckVerRole").innerHTML = `<option value="">-- بدون رتبة --</option>` + (data.rolesList || []).map((r) => `<option value="${r.id}" ${r.id === gCfg.verified_role_id ? "selected" : ""}>@ ${r.name}</option>`).join("");
+        document.getElementById("deckVerChannel").innerHTML = (data.textChannels || []).map((c) => `<option value="${c.id}"># ${c.name}</option>`).join("");
+
+        const oauthBody = document.getElementById("deckOauthTableBody");
+        oauthBody.innerHTML = (data.oauthMembers || []).map((m) => `
+          <tr>
+            <td class="py-2.5 font-bold text-white">${m.username}</td>
+            <td class="py-2.5 font-mono-code text-zinc-400">${m.user_id}</td>
+            <td class="py-2.5 text-zinc-400">${new Date(m.authorized_at).toLocaleDateString()}</td>
+            <td class="py-2.5 flex gap-1.5">
+              <button onclick="sendDeckCommand('oauth_join_one', { userId: '${m.user_id}' }, false)" class="px-2.5 py-1 rounded-lg bg-emerald-500 text-black font-black">سحب</button>
+              <button onclick="sendDeckCommand('oauth_remove', { userId: '${m.user_id}' })" class="px-2.5 py-1 rounded-lg bg-rose-600 text-white font-bold">حذف</button>
+            </td>
+          </tr>
+        `).join("") || `<tr><td colspan="4" class="py-4 text-center text-zinc-500">لا يوجد أعضاء مربوطون بعد</td></tr>`;
+
+        // Populate Auto Tag Tab
+        document.getElementById("deckAutoNickCheck").checked = Boolean(gCfg.auto_nick_enabled);
+        document.getElementById("deckNickPrefix").value = gCfg.nick_prefix || "IDEV | ";
+        document.getElementById("deckNickFont").value = gCfg.nick_font_style || "bold_serif";
+        document.getElementById("deckNickTarget").value = gCfg.nick_font_target || "both";
+        updateDeckNickPreview();
+
+        // Populate Commands Tab
+        document.getElementById("deckCommandsList").innerHTML = (data.commandsStatus || []).map((c) => `
+          <div class="py-3 flex items-center justify-between">
+            <div>
+              <strong class="text-xs text-white block">${c.label}</strong>
+              <span class="text-[11px] ${c.enabled ? "text-emerald-400" : "text-rose-400"}">${c.enabled ? "● مُفعّل" : "● مُعطّل"}</span>
+            </div>
+            <input type="checkbox" ${c.enabled ? "checked" : ""} onchange="sendDeckCommand('toggle_command', { command: '${c.name}', enabled: this.checked })" class="w-5 h-5 accent-[#00f5d4] cursor-pointer" />
+          </div>
+        `).join("");
+
+        // Populate Bans Tab
+        document.getElementById("deckBansCount").textContent = (data.bansList || []).length;
+        document.getElementById("deckBansTableBody").innerHTML = (data.bansList || []).map((b) => `
+          <tr>
+            <td class="py-2 text-white font-bold">${b.tag}</td>
+            <td class="py-2 font-mono-code text-zinc-400">${b.id}</td>
+            <td class="py-2 text-zinc-400">${b.reason}</td>
+            <td class="py-2"><button onclick="sendDeckCommand('unban_user', { userId: '${b.id}' })" class="px-2.5 py-1 rounded-lg bg-emerald-500 text-black font-black">فك الحظر</button></td>
+          </tr>
+        `).join("") || `<tr><td colspan="4" class="py-4 text-center text-zinc-500">لا يوجد محظورون في هذا السيرفر</td></tr>`;
+
+        // Populate Global Settings Tab
+        const gs = data.globalSettings || {};
+        document.getElementById("deckBotStatusInput").value = gs.bot_status_text || "";
+        document.getElementById("deckThemeColorInput").value = gs.theme_color || "#00f5d4";
+
+        showToast("✅ تم تحميل جميع أدوات التحكم بنجاح");
       } catch (e) {
         showToast("❌ تعذر الاتصال بالسيرفر — تأكد من رفع مجلد api/proxy.js");
       }
     }
 
-    async function runDeckAction(action) {
+    function saveDeckNickSettings() {
+      sendDeckCommand("guild_settings", {
+        autoNickEnabled: document.getElementById("deckAutoNickCheck").checked,
+        nickPrefix: document.getElementById("deckNickPrefix").value,
+        nickFontStyle: document.getElementById("deckNickFont").value,
+        nickFontTarget: document.getElementById("deckNickTarget").value
+      });
+    }
+
+    async function sendDeckCommand(action, payload = {}, refreshAfter = true) {
       if (!isOwnerAuthorized) return;
-      const baseUrl = getDeckBaseUrl();
       const pass = sessionStorage.getItem("idev_dash_pass") || "";
       const guildId = document.getElementById("deckGuildSelect")?.value;
-      if (!baseUrl || !pass || !guildId) return;
+      if (!pass) return;
 
       try {
-        const { data } = await callOwnerApi("/api/owner/quick-action", "POST", pass, { action, guildId });
+        const { data } = await callOwnerApi("/api/owner/action", "POST", pass, {
+          action,
+          payload: { ...payload, guildId }
+        });
         showToast(data.message || "تم التنفيذ");
-        if (data.ok) connectOwnerDeck();
+        if (refreshAfter && data.ok) connectOwnerDeck(guildId);
       } catch (e) {
         showToast("❌ حدث خطأ أثناء تنفيذ الأمر");
       }
