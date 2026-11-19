@@ -472,9 +472,14 @@
           </div>
         </div>
 
-        <button onclick="fetchLiveServerStats(true)" class="px-3.5 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-bold text-zinc-300 transition">
-          تحديث البيانات 🔄
-        </button>
+        <div class="flex flex-wrap items-center gap-2.5">
+          <a href="https://discord.gg/9ta4Wpdmk" target="_blank" rel="noopener noreferrer" class="px-4 py-2 rounded-xl bg-[#5865F2] hover:bg-[#4752C4] text-white font-black text-xs shadow-lg shadow-[#5865F2]/25 transition">
+            انضم للسيرفر الآن 🚀
+          </a>
+          <button onclick="fetchLiveServerStats(true)" class="px-3.5 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-bold text-zinc-300 transition">
+            تحديث البيانات 🔄
+          </button>
+        </div>
       </div>
 
       <!-- 4 Live Counters -->
@@ -677,15 +682,20 @@
       <div class="cyber-card p-6 flex flex-col justify-between text-start">
         <div>
           <div class="w-12 h-12 rounded-2xl bg-[#5865F2]/15 border border-[#5865F2]/40 flex items-center justify-center text-[#5865F2] text-2xl mb-4">💬</div>
-          <h3 class="text-xl font-black text-white">تواصل ديسكورد</h3>
+          <h3 class="text-xl font-black text-white">سيرفر وحساب ديسكورد</h3>
           <p id="contactDiscordTag" onclick="copyText('853351545013272596')" class="font-mono-code text-xs text-zinc-400 hover:text-[#00f5d4] cursor-pointer mt-1" dir="ltr">ID: 853351545013272596 📋</p>
           <p class="text-xs text-zinc-400 mt-3 leading-relaxed">
-            التواصل الأساسي لمناقشة تفاصيل البوتات والألعاب وإرسال معاينات حية قبل التسليم.
+            انضم إلى سيرفرنا الرسمي لمناقشة تفاصيل البوتات والألعاب وفتح تذاكر الطلبات والدعم الفني.
           </p>
         </div>
-        <a href="https://discord.com/users/853351545013272596" target="_blank" rel="noopener noreferrer" class="mt-5 block text-center py-2.5 rounded-xl bg-[#5865F2] hover:bg-[#4752C4] text-white font-extrabold text-xs transition">
-          فتح حساب ديسكورد
-        </a>
+        <div class="mt-5 grid grid-cols-2 gap-2">
+          <a href="https://discord.gg/9ta4Wpdmk" target="_blank" rel="noopener noreferrer" class="block text-center py-2.5 rounded-xl bg-[#5865F2] hover:bg-[#4752C4] text-white font-extrabold text-xs transition">
+            دخول السيرفر 🛡️
+          </a>
+          <a href="https://discord.com/users/853351545013272596" target="_blank" rel="noopener noreferrer" class="block text-center py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/15 text-white font-extrabold text-xs transition">
+            حساب المطور 👤
+          </a>
+        </div>
       </div>
 
       <!-- WhatsApp Direct -->
@@ -733,6 +743,8 @@
 
   <script>
     const DISCORD_USER_ID = "853351545013272596";
+    const DISCORD_INVITE_CODE = "9ta4Wpdmk";
+    const DISCORD_INVITE_URL = "https://discord.gg/9ta4Wpdmk";
     const WHATSAPP_NUMBER = "201121020801";
     const DEFAULT_BOT_API_URL = "http://92.118.206.166:30121";
     let currentLang = "ar";
@@ -1407,69 +1419,94 @@
       const isHttpsSite = window.location.protocol === "https:" && baseUrl.startsWith("http://");
       const fetchUrl = isHttpsSite ? `/api/proxy?url=${encodeURIComponent(targetUrl)}` : targetUrl;
 
+      let loadedFromBot = false;
+
       try {
         const res = await fetch(fetchUrl);
         const data = await res.json();
-        if (!data || !data.ok) return;
+        if (data && data.ok) {
+          loadedFromBot = true;
+          document.getElementById("srvNameDisplay").textContent = data.guildName || "Idev | إي ديف";
+          document.getElementById("statTotalMembers").textContent = data.memberCount ?? 0;
+          document.getElementById("statOnlineMembers").textContent = data.onlineCount ?? 0;
+          document.getElementById("statVoiceMembers").textContent = data.voiceCount ?? 0;
+          document.getElementById("statTotalChannels").textContent = data.channelsCount ?? 0;
+          document.getElementById("onlineBadgeCount").textContent = `${data.onlineCount ?? 0} Online`;
+          document.getElementById("voiceBadgeCount").textContent = `${data.voiceCount ?? 0} In Voice`;
 
-        document.getElementById("srvNameDisplay").textContent = data.guildName || "Idev | إي ديف";
-        document.getElementById("statTotalMembers").textContent = data.memberCount ?? 0;
-        document.getElementById("statOnlineMembers").textContent = data.onlineCount ?? 0;
-        document.getElementById("statVoiceMembers").textContent = data.voiceCount ?? 0;
-        document.getElementById("statTotalChannels").textContent = data.channelsCount ?? 0;
-        document.getElementById("onlineBadgeCount").textContent = `${data.onlineCount ?? 0} Online`;
-        document.getElementById("voiceBadgeCount").textContent = `${data.voiceCount ?? 0} In Voice`;
+          if (data.guildIcon) {
+            const iconImg = document.getElementById("srvIconImg");
+            const iconFb = document.getElementById("srvIconFallback");
+            iconImg.src = data.guildIcon;
+            iconImg.onload = () => {
+              iconImg.classList.remove("hidden");
+              iconFb?.classList.add("hidden");
+            };
+          }
 
-        if (data.guildIcon) {
-          const iconImg = document.getElementById("srvIconImg");
-          const iconFb = document.getElementById("srvIconFallback");
-          iconImg.src = data.guildIcon;
-          iconImg.onload = () => {
-            iconImg.classList.remove("hidden");
-            iconFb?.classList.add("hidden");
+          const statusColors = {
+            online: "bg-emerald-500",
+            idle: "bg-amber-400",
+            dnd: "bg-rose-500"
           };
-        }
 
-        const statusColors = {
-          online: "bg-emerald-500",
-          idle: "bg-amber-400",
-          dnd: "bg-rose-500"
-        };
-
-        const onlineBox = document.getElementById("onlineMembersList");
-        if (data.onlineMembers && data.onlineMembers.length > 0) {
-          onlineBox.innerHTML = data.onlineMembers.map((m) => `
-            <div class="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-full py-1 px-3">
-              <div class="relative w-5 h-5 rounded-full overflow-hidden shrink-0">
-                <img src="${m.avatar}" alt="${m.name}" class="w-full h-full object-cover" />
+          const onlineBox = document.getElementById("onlineMembersList");
+          if (data.onlineMembers && data.onlineMembers.length > 0) {
+            onlineBox.innerHTML = data.onlineMembers.map((m) => `
+              <div class="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-full py-1 px-3">
+                <div class="relative w-5 h-5 rounded-full overflow-hidden shrink-0">
+                  <img src="${m.avatar}" alt="${m.name}" class="w-full h-full object-cover" />
+                </div>
+                <span class="w-2 h-2 rounded-full ${statusColors[m.status] || "bg-emerald-500"}"></span>
+                <span class="text-xs font-bold text-zinc-200">${m.name}</span>
               </div>
-              <span class="w-2 h-2 rounded-full ${statusColors[m.status] || "bg-emerald-500"}"></span>
-              <span class="text-xs font-bold text-zinc-200">${m.name}</span>
-            </div>
-          `).join("");
-        } else {
-          onlineBox.innerHTML = `<span class="text-xs text-zinc-500">لا يوجد أعضاء متصلون حالياً</span>`;
-        }
+            `).join("");
+          } else {
+            onlineBox.innerHTML = `<span class="text-xs text-zinc-500">لا يوجد أعضاء متصلون حالياً</span>`;
+          }
 
-        const voiceBox = document.getElementById("voiceMembersList");
-        if (data.voiceMembers && data.voiceMembers.length > 0) {
-          voiceBox.innerHTML = data.voiceMembers.map((v) => `
-            <div class="flex items-center justify-between bg-white/5 border border-[#00f5d4]/20 rounded-xl px-3 py-2">
-              <div class="flex items-center gap-2">
-                <img src="${v.avatar}" alt="${v.name}" class="w-6 h-6 rounded-full object-cover" />
-                <span class="text-xs font-bold text-white">${v.name}</span>
+          const voiceBox = document.getElementById("voiceMembersList");
+          if (data.voiceMembers && data.voiceMembers.length > 0) {
+            voiceBox.innerHTML = data.voiceMembers.map((v) => `
+              <div class="flex items-center justify-between bg-white/5 border border-[#00f5d4]/20 rounded-xl px-3 py-2">
+                <div class="flex items-center gap-2">
+                  <img src="${v.avatar}" alt="${v.name}" class="w-6 h-6 rounded-full object-cover" />
+                  <span class="text-xs font-bold text-white">${v.name}</span>
+                </div>
+                <span class="font-mono-code text-[11px] text-[#00f5d4]">🔊 ${v.channelName}</span>
               </div>
-              <span class="font-mono-code text-[11px] text-[#00f5d4]">🔊 ${v.channelName}</span>
-            </div>
-          `).join("");
-        } else {
-          voiceBox.innerHTML = `<span class="text-xs text-zinc-500">لا يوجد أعضاء في الرومات الصوتية حالياً</span>`;
+            `).join("");
+          } else {
+            voiceBox.innerHTML = `<span class="text-xs text-zinc-500">لا يوجد أعضاء في الرومات الصوتية حالياً</span>`;
+          }
         }
+      } catch (e) {}
 
-        if (manual) showToast("✅ تم تحديث إحصائيات السيرفر الحية");
-      } catch (e) {
-        if (manual) showToast("⚠️ تعذر جلب بيانات السيرفر — تأكد من تفعيل Presence Intent في البوت");
+      // جلب احتياطي فوري من API ديسكورد الرسمي عبر رابط الدعوة (9ta4Wpdmk) لعرض اسم السيرفر وأيقونته وعدد الأعضاء والمتصلين دائماً
+      if (!loadedFromBot) {
+        try {
+          const invRes = await fetch(`https://discord.com/api/v9/invites/${DISCORD_INVITE_CODE}?with_counts=true&with_expiration=true`);
+          const invData = await invRes.json();
+          if (invData && invData.guild) {
+            document.getElementById("srvNameDisplay").textContent = invData.guild.name || "Idev | إي ديف";
+            document.getElementById("statTotalMembers").textContent = invData.approximate_member_count ?? "--";
+            document.getElementById("statOnlineMembers").textContent = invData.approximate_presence_count ?? "--";
+            document.getElementById("onlineBadgeCount").textContent = `${invData.approximate_presence_count ?? 0} Online`;
+
+            if (invData.guild.icon) {
+              const iconImg = document.getElementById("srvIconImg");
+              const iconFb = document.getElementById("srvIconFallback");
+              iconImg.src = `https://cdn.discordapp.com/icons/${invData.guild.id}/${invData.guild.icon}.png?size=128`;
+              iconImg.onload = () => {
+                iconImg.classList.remove("hidden");
+                iconFb?.classList.add("hidden");
+              };
+            }
+          }
+        } catch (e) {}
       }
+
+      if (manual) showToast("✅ تم تحديث بيانات السيرفر الحية");
     }
 
     window.onload = function () {
