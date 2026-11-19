@@ -679,6 +679,123 @@
         optionValue: "بوت ديسكورد متكامل (Discord Bot)"
       },
       {
+        category: "bots",
+        icon: "🔗",
+        badge: "OAUTH2 & BACKUP",
+        title: "أنظمة OAuth2 وسحب الأعضاء والنسخ الاحتياطي",
+        desc: "تطوير أنظمة تفعيل الأعضاء وربط الحسابات عبر Discord OAuth2 مع إمكانية استعادة الأعضاء وبناء السيرفرات بضغطة زر.",
+        optionValue: "بوت ديسكورد + لوحة تحكم ويب (Bot + Dashboard)"
+      },
+      {
+        category: "bots",
+        icon: "💰",
+        badge: "ECONOMY & GAMES",
+        title: "بوتات الاقتصاد والألعاب التفاعلية (RPG & Levels)",
+        desc: "أنظمة عملات افتراضية، متاجر، مستويات (XP)، ألعاب جماعية داخل الديسكورد بواجهات أزرار وقوائم تفاعلية.",
+        optionValue: "بوت ديسكورد متكامل (Discord Bot)"
+      },
+      {
+        category: "games",
+        icon: "🎮",
+        badge: "THREE.JS / WEBGL",
+        title: "تطوير ألعاب المتصفح ثلاثية الأبعاد (3D Games)",
+        desc: "بناء ألعاب 3D تفاعلية تعمل بسلاسة 60 FPS على المتصفح والموبايل مع فيزياء متكاملة ومؤثرات بصرية وصوتية.",
+        optionValue: "برمجة لعبة 2D / 3D (Game Development)"
+      },
+      {
+        category: "games",
+        icon: "🕹️",
+        badge: "HTML5 CANVAS / 2D",
+        title: "برمجة ألعاب 2D احترافية وأنظمة تصدر (Leaderboards)",
+        desc: "تصميم وبرمجة ألعاب الأركيد والمنصات السريعة مع حفظ النتائج وربطها بحسابات اللاعبين.",
+        optionValue: "برمجة لعبة 2D / 3D (Game Development)"
+      },
+      {
+        category: "web",
+        icon: "🎛️",
+        badge: "WEB DASHBOARD & API",
+        title: "لوحات تحكم ويب مخصصة للبوتات (Admin Panels)",
+        desc: "ربط بوت الديسكورد الخاص بك بلوحة تحكم ويب عصرية للتحكم في الإعدادات، الرتب، الأوامر، والإحصائيات لحظياً.",
+        optionValue: "بوت ديسكورد + لوحة تحكم ويب (Bot + Dashboard)"
+      }
+    ];
+
+    /* ========================================================================
+       👑 حماية وظهور لوحة تحكم المالك الحصرية (ID: 853351545013272596)
+    ======================================================================== */
+    function initOwnerVisibilityGuard() {
+      const params = new URLSearchParams(window.location.search);
+      const ownerParam = params.get("owner");
+      if (ownerParam === DISCORD_USER_ID) {
+        localStorage.setItem("idev_owner_id", DISCORD_USER_ID);
+      } else if (ownerParam === "0" || ownerParam === "logout") {
+        localStorage.removeItem("idev_owner_id");
+      }
+
+      isOwnerAuthorized = localStorage.getItem("idev_owner_id") === DISCORD_USER_ID;
+      const btn = document.getElementById("ownerDashboardBtn");
+      if (btn) {
+        if (isOwnerAuthorized) {
+          btn.classList.remove("hidden");
+          btn.classList.add("inline-flex");
+        } else {
+          btn.classList.add("hidden");
+          btn.classList.remove("inline-flex");
+        }
+      }
+
+      const savedUrl = localStorage.getItem("idev_dash_url") || "http://92.118.206.166:30121";
+      const urlInput = document.getElementById("dashApiUrl");
+      if (urlInput) urlInput.value = savedUrl;
+    }
+
+    function openOwnerDeck() {
+      if (!isOwnerAuthorized) return;
+      const sec = document.getElementById("ownerDashboardSection");
+      if (sec) {
+        sec.classList.remove("hidden");
+        sec.scrollIntoView({ behavior: "smooth" });
+      }
+      if (sessionStorage.getItem("idev_dash_pass")) {
+        connectOwnerDeck();
+      }
+    }
+
+    function closeOwnerDeck() {
+      document.getElementById("ownerDashboardSection")?.classList.add("hidden");
+    }
+
+    function getDeckBaseUrl() {
+      const raw = (document.getElementById("dashApiUrl")?.value || localStorage.getItem("idev_dash_url") || "http://92.118.206.166:30121").trim();
+      return raw.replace(/\/+$/, "");
+    }
+
+    async function callOwnerApi(endpointPath, method = "GET", pass = "", bodyObj = null) {
+      const baseUrl = getDeckBaseUrl();
+      const targetFullUrl = `${baseUrl}${endpointPath}`;
+      const isHttpsSite = window.location.protocol === "https:" && baseUrl.startsWith("http://");
+
+      const fetchUrl = isHttpsSite
+        ? `/api/proxy?url=${encodeURIComponent(targetFullUrl)}`
+        : targetFullUrl;
+
+      const options = {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+          "x-owner-token": pass
+        }
+      };
+
+      if (bodyObj && method !== "GET") {
+        options.body = JSON.stringify(bodyObj);
+      }
+
+      const res = await fetch(fetchUrl, options);
+      const data = await res.json();
+      return { res, data };
+    }
+
     function switchDeckTab(tabId, btn) {
       document.querySelectorAll(".deck-pane").forEach((p) => p.classList.add("hidden"));
       document.querySelectorAll(".deck-tab").forEach((b) => {
