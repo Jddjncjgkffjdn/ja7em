@@ -114,8 +114,14 @@
         <a href="#reviews" class="px-3.5 py-2 rounded-xl text-zinc-300 hover:text-[#00f5d4] hover:bg-white/5 transition" data-ar="// التقييمات" data-en="// Vouches">// التقييمات</a>
       </nav>
 
-      <!-- Actions: Sound + Lang + Live Discord -->
+      <!-- Actions: Owner Dashboard (Hidden Except Owner 853351545013272596) + Sound + Lang + Live Discord -->
       <div class="flex items-center gap-2">
+        <button id="ownerDashboardBtn" onclick="openOwnerDeck()" title="Idev Owner Dashboard"
+          class="hidden h-9 px-3 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-400/50 items-center gap-1.5 text-amber-300 font-mono-code text-xs font-extrabold transition">
+          <span>👑</span>
+          <span>DASHBOARD</span>
+        </button>
+
         <button onclick="toggleSound()" id="soundBtn" title="تفعيل / إيقاف الموسيقى" class="h-9 px-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 flex items-center gap-1.5 text-zinc-300 transition">
           <span id="soundIcon" class="text-sm">🔇</span>
           <span id="soundLabel" class="hidden sm:inline font-mono-code text-[10px] font-bold text-zinc-400">AUDIO</span>
@@ -141,6 +147,64 @@
   </header>
 
   <main id="top" class="max-w-6xl mx-auto px-4 sm:px-6 pt-10 pb-28 space-y-24">
+
+    <!-- ======================================================================
+         OWNER-ONLY EMBEDDED DASHBOARD SECTION (Visible Only to 853351545013272596)
+    ====================================================================== -->
+    <section id="ownerDashboardSection" class="hidden cyber-card p-6 sm:p-8 border-amber-400/40 space-y-6">
+      <div class="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-4">
+        <div class="text-start">
+          <span class="font-mono-code text-xs text-amber-300 font-bold" dir="ltr">// OWNER EXCLUSIVE • ID: 853351545013272596</span>
+          <h2 class="text-2xl sm:text-3xl font-black text-white mt-1">👑 لوحة تحكم البوت المدمجة — Idev | إي ديف</h2>
+        </div>
+        <button onclick="closeOwnerDeck()" class="px-3.5 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/15 text-xs font-bold text-zinc-300 transition">
+          إغلاق اللوحة ✕
+        </button>
+      </div>
+
+      <div id="ownerLoginBox" class="grid grid-cols-1 md:grid-cols-3 gap-3 items-end">
+        <div>
+          <label class="block text-xs font-bold text-zinc-300 mb-1.5">رابط الداش بورد (Dashboard URL)</label>
+          <input id="dashApiUrl" type="text" dir="ltr" placeholder="http://92.118.206.166:30121"
+            class="w-full bg-[#06080d] border border-white/15 rounded-xl px-3.5 py-2.5 text-xs font-mono-code text-white outline-none focus:border-[#00f5d4]" />
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-zinc-300 mb-1.5">كلمة مرور لوحة التحكم</label>
+          <input id="dashPassInput" type="password" placeholder="DASHBOARD_PASSWORD"
+            class="w-full bg-[#06080d] border border-white/15 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-[#00f5d4]" />
+        </div>
+        <button onclick="connectOwnerDeck()" class="py-2.5 px-5 rounded-xl bg-[#00f5d4] hover:bg-[#00d9bc] text-black font-black text-xs transition">
+          اتصال وعرض البيانات ⚡
+        </button>
+      </div>
+
+      <div id="ownerDeckData" class="hidden space-y-5">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div class="bg-[#06080d] border border-white/10 rounded-2xl p-4 text-start">
+            <div class="text-xs text-zinc-400 font-bold">السيرفرات المتصلة</div>
+            <div id="deckGuildsCount" class="font-mono-code text-2xl font-black text-[#00f5d4] mt-1">0</div>
+          </div>
+          <div class="bg-[#06080d] border border-white/10 rounded-2xl p-4 text-start">
+            <div class="text-xs text-zinc-400 font-bold">أعضاء OAuth2 المحفوظون</div>
+            <div id="deckOauthCount" class="font-mono-code text-2xl font-black text-[#8b5cf6] mt-1">0</div>
+          </div>
+          <div class="bg-[#06080d] border border-white/10 rounded-2xl p-4 text-start">
+            <div class="text-xs text-zinc-400 font-bold">البوت النشط</div>
+            <div id="deckBotTag" class="font-mono-code text-sm font-black text-amber-300 mt-2">IDEV | أي ديف</div>
+          </div>
+        </div>
+
+        <div class="bg-[#06080d] border border-white/10 rounded-2xl p-4 flex flex-wrap items-center justify-between gap-3">
+          <select id="deckGuildSelect" class="bg-[#0a0c12] border border-white/15 rounded-xl px-3.5 py-2 text-xs font-bold text-white outline-none focus:border-[#00f5d4]"></select>
+          <div class="flex flex-wrap gap-2">
+            <button onclick="runDeckAction('pull_all')" class="px-3.5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black text-xs font-black transition">🚀 سحب الكل OAuth</button>
+            <button onclick="runDeckAction('apply_nick_all')" class="px-3.5 py-2 rounded-xl bg-[#00f5d4] hover:bg-[#00d9bc] text-black text-xs font-black transition">🏷️ تطبيق التاج للجميع</button>
+            <button onclick="runDeckAction('unban_all')" class="px-3.5 py-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-black text-xs font-black transition">🔓 فك حظر الكل</button>
+            <button onclick="openFullDashboardTab()" class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/15 text-white text-xs font-extrabold transition">↗ اللوحة الكاملة</button>
+          </div>
+        </div>
+      </div>
+    </section>
 
     <!-- ======================================================================
          1. SPLIT INTERACTIVE HERO + LIVE CODE TERMINAL
@@ -445,9 +509,8 @@
     let currentLang = "ar";
     let soundEnabled = false;
     let ambientSynth = null;
-    let bassSynth = null;
     let musicLoop = null;
-    let bassLoop = null;
+    let isOwnerAuthorized = false;
 
     const SERVICES_DATA = [
       {
@@ -499,6 +562,113 @@
         optionValue: "تعديل أو إصلاح كود بوت قائم (Fix & Upgrade)"
       }
     ];
+
+    // إظهار زر لوحة التحكم لك فقط (853351545013272596) وإخفاؤه عن باقي الزوار
+    function initOwnerVisibilityGuard() {
+      const params = new URLSearchParams(window.location.search);
+      const hashStr = window.location.hash.replace(/^#/, "");
+      const hashParams = new URLSearchParams(hashStr.includes("=") ? hashStr : "");
+      const candidate = params.get("owner") || hashParams.get("owner") || sessionStorage.getItem("idev_owner_session");
+      const btn = document.getElementById("ownerDashboardBtn");
+
+      if (candidate === DISCORD_USER_ID) {
+        isOwnerAuthorized = true;
+        sessionStorage.setItem("idev_owner_session", DISCORD_USER_ID);
+        if (btn) {
+          btn.classList.remove("hidden");
+          btn.classList.add("flex");
+        }
+      } else {
+        isOwnerAuthorized = false;
+        if (btn) {
+          btn.classList.add("hidden");
+          btn.classList.remove("flex");
+        }
+        document.getElementById("ownerDashboardSection")?.classList.add("hidden");
+      }
+    }
+
+    function openOwnerDeck() {
+      if (!isOwnerAuthorized) return;
+      const sec = document.getElementById("ownerDashboardSection");
+      const urlInput = document.getElementById("dashApiUrl");
+      if (urlInput && !urlInput.value) {
+        urlInput.value = localStorage.getItem("idev_dash_url") || "http://92.118.206.166:30121";
+      }
+      sec.classList.remove("hidden");
+      sec.scrollIntoView({ behavior: "smooth" });
+      if (sessionStorage.getItem("idev_dash_pass")) {
+        document.getElementById("dashPassInput").value = sessionStorage.getItem("idev_dash_pass");
+        connectOwnerDeck();
+      }
+    }
+
+    function closeOwnerDeck() {
+      document.getElementById("ownerDashboardSection")?.classList.add("hidden");
+    }
+
+    function getDeckBaseUrl() {
+      return (document.getElementById("dashApiUrl")?.value || localStorage.getItem("idev_dash_url") || "").trim().replace(/\/+$/, "");
+    }
+
+    async function connectOwnerDeck() {
+      if (!isOwnerAuthorized) return;
+      const baseUrl = getDeckBaseUrl();
+      const pass = (document.getElementById("dashPassInput")?.value || "").trim();
+      if (!baseUrl || !pass) return showToast("⚠️ أدخل رابط الداش بورد وكلمة المرور");
+
+      localStorage.setItem("idev_dash_url", baseUrl);
+      sessionStorage.setItem("idev_dash_pass", pass);
+
+      try {
+        const res = await fetch(`${baseUrl}/api/owner/overview`, {
+          headers: { "x-owner-token": pass }
+        });
+        const data = await res.json();
+        if (!res.ok || !data.ok) return showToast("❌ فشل التحقق من كلمة المرور أو الصلاحية");
+
+        document.getElementById("ownerDeckData").classList.remove("hidden");
+        document.getElementById("deckGuildsCount").textContent = data.guildsCount ?? 0;
+        document.getElementById("deckOauthCount").textContent = data.oauthCount ?? 0;
+        document.getElementById("deckBotTag").textContent = data.botTag || "IDEV | أي ديف";
+
+        const sel = document.getElementById("deckGuildSelect");
+        sel.innerHTML = (data.guilds || []).map(g => `<option value="${g.id}">${g.name} (${g.memberCount})</option>`).join("");
+        showToast("✅ تم الاتصال بلوحة تحكم البوت");
+      } catch (e) {
+        showToast("❌ تعذر الاتصال بالسيرفر (تحقق من الرابط أو HTTPS)");
+      }
+    }
+
+    async function runDeckAction(action) {
+      if (!isOwnerAuthorized) return;
+      const baseUrl = getDeckBaseUrl();
+      const pass = sessionStorage.getItem("idev_dash_pass") || "";
+      const guildId = document.getElementById("deckGuildSelect")?.value;
+      if (!baseUrl || !pass || !guildId) return;
+
+      try {
+        const res = await fetch(`${baseUrl}/api/owner/quick-action`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-owner-token": pass
+          },
+          body: JSON.stringify({ action, guildId })
+        });
+        const data = await res.json();
+        showToast(data.message || "تم التنفيذ");
+        if (data.ok) connectOwnerDeck();
+      } catch (e) {
+        showToast("❌ حدث خطأ أثناء تنفيذ الأمر");
+      }
+    }
+
+    function openFullDashboardTab() {
+      if (!isOwnerAuthorized) return;
+      const baseUrl = getDeckBaseUrl();
+      if (baseUrl) window.open(baseUrl, "_blank", "noopener,noreferrer");
+    }
 
     function renderServices(filter = "all") {
       const grid = document.getElementById("servicesGrid");
@@ -617,7 +787,6 @@
     async function initAmbientTrack() {
       if (ambientSynth) return;
 
-      // فلتر لتنعيم الترددات العالية وجعل الصوت دافئاً وهادئاً جداً
       const warmFilter = new Tone.Filter({
         frequency: 620,
         type: "lowpass",
@@ -640,7 +809,6 @@
         volume: -24
       }).connect(reverb);
 
-      // كوردات بيانو/باد دافئة وبطيئة جداً (Lo-Fi Lounge / Soft Ambient)
       const chords = [
         ["F3", "A3", "C4", "E4"],
         ["E3", "G3", "B3", "D4"],
@@ -656,43 +824,6 @@
         ambientSynth.triggerAttackRelease(chord, "2m", time);
         step++;
       }, "2m");
-    }
-
-    async function toggleSound() {
-      const btn = document.getElementById("soundBtn");
-      const icon = document.getElementById("soundIcon");
-      const label = document.getElementById("soundLabel");
-
-      try {
-        await Tone.start();
-        await initAmbientTrack();
-
-        soundEnabled = !soundEnabled;
-        if (soundEnabled) {
-          musicLoop.start(0);
-          Tone.Transport.start();
-          icon.textContent = "🎵";
-          if (label) {
-            label.textContent = "ON";
-            label.classList.add("text-[#00f5d4]");
-          }
-          if (btn) btn.classList.add("border-[#00f5d4]/50", "bg-[#00f5d4]/10");
-          showToast(currentLang === "ar" ? "🎵 تم تشغيل الموسيقى الهادئة" : "🎵 Soft Ambient Music Enabled");
-        } else {
-          Tone.Transport.pause();
-          icon.textContent = "🔇";
-          if (label) {
-            label.textContent = "AUDIO";
-            label.classList.remove("text-[#00f5d4]");
-          }
-          if (btn) btn.classList.remove("border-[#00f5d4]/50", "bg-[#00f5d4]/10");
-          showToast(currentLang === "ar" ? "🔇 تم إيقاف الصوت" : "🔇 Audio Muted");
-        }
-      } catch (e) {}
-    }
-
-    function playClick() {
-      // صامت تماماً للحفاظ على الهدوء والرقي أثناء التصفح
     }
 
     async function toggleSound() {
@@ -763,7 +894,6 @@
       });
     }
 
-    // Live Discord Profile Sync (Lanyard API + WebSocket)
     function updateDiscordUI(data) {
       if (!data || !data.discord_user) return;
       const user = data.discord_user;
@@ -856,7 +986,6 @@
       } catch (e) {}
     }
 
-    // 3D Particle & Wireframe Background (Three.js)
     function init3DBackground() {
       const canvas = document.getElementById("bgCanvas");
       if (!canvas || typeof THREE === "undefined") return;
@@ -869,14 +998,12 @@
       renderer.setSize(window.innerWidth, window.innerHeight);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-      // Floating Wireframe Icosahedron
       const geo = new THREE.IcosahedronGeometry(9, 1);
       const mat = new THREE.MeshBasicMaterial({ color: 0x00f5d4, wireframe: true, transparent: true, opacity: 0.12 });
       const mesh = new THREE.Mesh(geo, mat);
       mesh.position.set(-8, 2, -5);
       scene.add(mesh);
 
-      // Particle Field
       const pCount = 260;
       const pGeo = new THREE.BufferGeometry();
       const positions = new Float32Array(pCount * 3);
@@ -914,6 +1041,7 @@
     }
 
     window.onload = function () {
+      initOwnerVisibilityGuard();
       renderServices("all");
       updateOrderPreview();
       attachCardSpotlights();
