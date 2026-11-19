@@ -468,7 +468,7 @@
               <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
               <span class="font-mono-code text-[11px] text-[#00f5d4] font-bold" dir="ltr">LIVE DISCORD SERVER TELEMETRY</span>
             </div>
-            <h2 id="srvNameDisplay" class="text-xl sm:text-2xl font-black text-white mt-0.5">Idev | إي ديف Community</h2>
+            <h2 id="srvNameDisplay" class="text-xl sm:text-2xl font-black text-white mt-0.5">Idev | أي ديف</h2>
           </div>
         </div>
 
@@ -1426,7 +1426,7 @@
         const data = await res.json();
         if (data && data.ok) {
           loadedFromBot = true;
-          document.getElementById("srvNameDisplay").textContent = data.guildName || "Idev | إي ديف";
+          document.getElementById("srvNameDisplay").textContent = "Idev | أي ديف";
           document.getElementById("statTotalMembers").textContent = data.memberCount ?? 0;
           document.getElementById("statOnlineMembers").textContent = data.onlineCount ?? 0;
           document.getElementById("statVoiceMembers").textContent = data.voiceCount ?? 0;
@@ -1488,7 +1488,7 @@
           const invRes = await fetch(`https://discord.com/api/v9/invites/${DISCORD_INVITE_CODE}?with_counts=true&with_expiration=true`);
           const invData = await invRes.json();
           if (invData && invData.guild) {
-            document.getElementById("srvNameDisplay").textContent = invData.guild.name || "Idev | إي ديف";
+            document.getElementById("srvNameDisplay").textContent = "Idev | أي ديف";
             document.getElementById("statTotalMembers").textContent = invData.approximate_member_count ?? "--";
             document.getElementById("statOnlineMembers").textContent = invData.approximate_presence_count ?? "--";
             document.getElementById("onlineBadgeCount").textContent = `${invData.approximate_presence_count ?? 0} Online`;
