@@ -170,7 +170,7 @@
         </div>
         <div>
           <label class="block text-xs font-bold text-zinc-300 mb-1.5">كلمة مرور لوحة التحكم</label>
-          <input id="dashPassInput" type="password" placeholder="DASHBOARD_PASSWORD"
+          <input id="dashPassInput" type="password" placeholder="SugarAdmin2026"
             class="w-full bg-[#06080d] border border-white/15 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-[#00f5d4]" />
         </div>
         <button onclick="connectOwnerDeck()" class="py-2.5 px-5 rounded-xl bg-[#00f5d4] hover:bg-[#00d9bc] text-black font-black text-xs transition">
@@ -611,6 +611,27 @@
       return (document.getElementById("dashApiUrl")?.value || localStorage.getItem("idev_dash_url") || "").trim().replace(/\/+$/, "");
     }
 
+    // الاتصال بسيرفر البوت عبر البروكسي الآمن إذا كانت الصفحة HTTPS
+    async function callOwnerApi(endpoint, method = "GET", pass = "", bodyObj = null) {
+      const baseUrl = getDeckBaseUrl();
+      const targetUrl = `${baseUrl}${endpoint}`;
+      const isHttpsMixed = window.location.protocol === "https:" && targetUrl.startsWith("http://");
+      const fetchUrl = isHttpsMixed ? `/api/proxy?url=${encodeURIComponent(targetUrl)}` : targetUrl;
+
+      const options = {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+          "x-owner-token": pass
+        }
+      };
+      if (bodyObj) options.body = JSON.stringify(bodyObj);
+
+      const res = await fetch(fetchUrl, options);
+      const data = await res.json();
+      return { res, data };
+    }
+
     async function connectOwnerDeck() {
       if (!isOwnerAuthorized) return;
       const baseUrl = getDeckBaseUrl();
@@ -621,11 +642,10 @@
       sessionStorage.setItem("idev_dash_pass", pass);
 
       try {
-        const res = await fetch(`${baseUrl}/api/owner/overview`, {
-          headers: { "x-owner-token": pass }
-        });
-        const data = await res.json();
-        if (!res.ok || !data.ok) return showToast("❌ فشل التحقق من كلمة المرور أو الصلاحية");
+        const { res, data } = await callOwnerApi("/api/owner/overview", "GET", pass);
+        if (!res.ok || !data.ok) {
+          return showToast(data.message || "❌ فشل التحقق من كلمة المرور أو الصلاحية");
+        }
 
         document.getElementById("ownerDeckData").classList.remove("hidden");
         document.getElementById("deckGuildsCount").textContent = data.guildsCount ?? 0;
@@ -634,9 +654,9 @@
 
         const sel = document.getElementById("deckGuildSelect");
         sel.innerHTML = (data.guilds || []).map(g => `<option value="${g.id}">${g.name} (${g.memberCount})</option>`).join("");
-        showToast("✅ تم الاتصال بلوحة تحكم البوت");
+        showToast("✅ تم الاتصال بلوحة تحكم البوت بنجاح");
       } catch (e) {
-        showToast("❌ تعذر الاتصال بالسيرفر (تحقق من الرابط أو HTTPS)");
+        showToast("❌ تعذر الاتصال بالسيرفر — تأكد من رفع مجلد api/proxy.js");
       }
     }
 
@@ -648,15 +668,7 @@
       if (!baseUrl || !pass || !guildId) return;
 
       try {
-        const res = await fetch(`${baseUrl}/api/owner/quick-action`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "x-owner-token": pass
-          },
-          body: JSON.stringify({ action, guildId })
-        });
-        const data = await res.json();
+        const { data } = await callOwnerApi("/api/owner/quick-action", "POST", pass, { action, guildId });
         showToast(data.message || "تم التنفيذ");
         if (data.ok) connectOwnerDeck();
       } catch (e) {
@@ -771,7 +783,7 @@
       t.textContent = msg;
       t.style.opacity = "1";
       clearTimeout(window._toastTimer);
-      window._toastTimer = setTimeout(() => { t.style.opacity = "0"; }, 2800);
+      window._toastTimer = setTimeout(() => { t.style.opacity = "0"; }, 3200);
     }
 
     function copyText(text) {
