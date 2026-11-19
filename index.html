@@ -3,812 +3,439 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Ja7eem Dev | استوديو جحيم لبرمجة بوتات ديسكورد والألعاب</title>
+  <title>JA7EEM.DEV — هندسة البوتات وتطوير الألعاب</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-base: #040711;
-      --bg-surface: #0a1020;
-      --accent-blue: #3b82f6;
-      --accent-indigo: #6366f1;
+      --bg-void: #030407;
+      --border-dim: rgba(255, 255, 255, 0.08);
     }
-    * { box-sizing: border-box; }
+    * { box-sizing: border-box; scroll-behavior: smooth; }
     body {
       margin: 0;
-      font-family: 'Cairo', 'Inter', sans-serif;
-      background-color: var(--bg-base);
-      background-image:
-        radial-gradient(circle at 80% 10%, rgba(59, 130, 246, 0.16), transparent 36%),
-        radial-gradient(circle at 15% 45%, rgba(99, 102, 241, 0.12), transparent 42%),
-        radial-gradient(circle at 75% 88%, rgba(14, 165, 233, 0.10), transparent 40%);
-      color: #f8fafc;
-      min-height: 100vh;
+      font-family: 'Cairo', sans-serif;
+      background-color: var(--bg-void);
+      color: #f4f4f5;
       overflow-x: hidden;
     }
+    .font-mono-code { font-family: 'JetBrains Mono', monospace; }
 
-    /* Glass & Neon Depth Cards */
-    .glass-nav {
-      background: rgba(8, 13, 26, 0.82);
+    /* 3D Canvas Background */
+    #bgCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    /* Interactive Spotlight Cards */
+    .cyber-card {
+      position: relative;
+      background: rgba(10, 12, 18, 0.78);
       backdrop-filter: blur(18px);
-      border: 1px solid rgba(51, 65, 85, 0.55);
-    }
-
-    .pro-card {
-      position: relative;
-      background: linear-gradient(160deg, rgba(14, 22, 42, 0.92) 0%, rgba(7, 11, 22, 0.96) 100%);
-      border: 1px solid rgba(30, 48, 86, 0.85);
-      border-radius: 24px;
-      transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.28s ease, box-shadow 0.28s ease;
+      border: 1px solid var(--border-dim);
+      border-radius: 20px;
       overflow: hidden;
+      transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.3s ease;
     }
-    .pro-card:hover {
-      transform: translateY(-5px);
-      border-color: rgba(59, 130, 246, 0.6);
-      box-shadow: 0 20px 45px -15px rgba(37, 99, 235, 0.3);
+    .cyber-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(
+        450px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+        rgba(0, 245, 212, 0.12),
+        transparent 60%
+      );
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
     }
-
-    /* Bento Cards with Subtle Ambient Glow */
-    .bento-tile {
-      position: relative;
-      border-radius: 24px;
-      padding: 26px;
-      cursor: pointer;
-      transition: all 0.28s ease;
-      overflow: hidden;
-    }
-    .bento-tile:hover { transform: translateY(-4px); }
-    .tile-blue {
-      background: linear-gradient(145deg, rgba(37, 99, 235, 0.26) 0%, rgba(9, 14, 28, 0.96) 72%);
-      border: 1px solid rgba(59, 130, 246, 0.38);
-      box-shadow: 0 14px 36px -12px rgba(37, 99, 235, 0.25);
-    }
-    .tile-indigo {
-      background: linear-gradient(145deg, rgba(99, 102, 241, 0.26) 0%, rgba(9, 14, 28, 0.96) 72%);
-      border: 1px solid rgba(129, 140, 248, 0.38);
-      box-shadow: 0 14px 36px -12px rgba(99, 102, 241, 0.25);
-    }
-    .tile-amber {
-      background: linear-gradient(145deg, rgba(217, 119, 6, 0.25) 0%, rgba(9, 14, 28, 0.96) 72%);
-      border: 1px solid rgba(245, 158, 11, 0.38);
-      box-shadow: 0 14px 36px -12px rgba(217, 119, 6, 0.22);
-    }
-    .tile-emerald {
-      background: linear-gradient(145deg, rgba(5, 150, 105, 0.25) 0%, rgba(9, 14, 28, 0.96) 72%);
-      border: 1px solid rgba(16, 185, 129, 0.38);
-      box-shadow: 0 14px 36px -12px rgba(5, 150, 105, 0.22);
-    }
-    .tile-cyan {
-      background: linear-gradient(145deg, rgba(8, 145, 178, 0.25) 0%, rgba(9, 14, 28, 0.96) 72%);
-      border: 1px solid rgba(6, 182, 212, 0.38);
-      box-shadow: 0 14px 36px -12px rgba(8, 145, 178, 0.22);
-    }
-    .tile-fuchsia {
-      background: linear-gradient(145deg, rgba(192, 38, 211, 0.24) 0%, rgba(9, 14, 28, 0.96) 72%);
-      border: 1px solid rgba(217, 70, 239, 0.38);
-      box-shadow: 0 14px 36px -12px rgba(192, 38, 211, 0.22);
+    .cyber-card:hover::before { opacity: 1; }
+    .cyber-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(0, 245, 212, 0.45);
     }
 
-    .view-section {
-      display: none;
-      animation: viewFade 0.3s ease forwards;
+    .gradient-title {
+      background: linear-gradient(135deg, #ffffff 15%, #00f5d4 55%, #8b5cf6 95%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
-    .view-section.active {
-      display: block;
-    }
-    @keyframes viewFade {
-      from { opacity: 0; transform: translateY(12px); }
-      to { opacity: 1; transform: translateY(0); }
+
+    /* Terminal Window */
+    .terminal-shell {
+      background: rgba(6, 8, 13, 0.92);
+      border: 1px solid rgba(0, 245, 212, 0.25);
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.85), 0 0 35px -10px rgba(0, 245, 212, 0.15);
     }
 
     /* Custom Scrollbar */
-    ::-webkit-scrollbar { width: 7px; }
-    ::-webkit-scrollbar-track { background: #040711; }
-    ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 99px; }
-    ::-webkit-scrollbar-thumb:hover { background: #3b82f6; }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #030407; }
+    ::-webkit-scrollbar-thumb { background: #1f2937; border-radius: 99px; }
+    ::-webkit-scrollbar-thumb:hover { background: #00f5d4; }
   </style>
 </head>
-<body class="selection:bg-blue-600 selection:text-white">
+<body class="selection:bg-[#00f5d4] selection:text-black">
 
-  <!-- Sticky Top Navigation Bar -->
-  <header class="sticky top-3 z-40 max-w-6xl mx-auto px-4">
-    <div class="glass-nav rounded-2xl px-4 py-2.5 flex items-center justify-between shadow-2xl">
-      <!-- Right: Brand + Quick Nav -->
-      <div class="flex items-center gap-6">
-        <button onclick="switchView('home')" class="flex items-center gap-2.5 group">
-          <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center font-black text-white text-sm shadow-lg shadow-blue-600/30 group-hover:scale-105 transition">
-            J7
+  <!-- Dynamic 3D Particle & Grid Canvas -->
+  <canvas id="bgCanvas"></canvas>
+
+  <!-- Floating Command Bar Header -->
+  <header class="sticky top-4 z-50 max-w-6xl mx-auto px-4">
+    <div class="bg-[#090b10]/85 backdrop-blur-xl border border-white/10 rounded-2xl px-4 py-3 flex items-center justify-between shadow-2xl">
+      <!-- Brand Identity -->
+      <a href="#top" class="flex items-center gap-3 group">
+        <div class="w-10 h-10 rounded-xl bg-[#00f5d4]/10 border border-[#00f5d4]/40 flex items-center justify-center font-mono-code font-black text-[#00f5d4] text-base group-hover:bg-[#00f5d4] group-hover:text-black transition">
+          &lt;/&gt;
+        </div>
+        <div class="text-start">
+          <div class="font-mono-code font-black text-white text-base tracking-wider flex items-center gap-1.5" dir="ltr">
+            JA7EEM<span class="text-[#00f5d4]">.DEV</span>
           </div>
-          <div class="text-start">
-            <span class="font-black text-white text-base tracking-wide block leading-none">JA7EEM DEV</span>
-            <span class="text-[10px] font-bold text-sky-400" data-ar="برمجة بوتات وألعاب" data-en="Bots & Game Dev">برمجة بوتات وألعاب</span>
-          </div>
+          <span class="text-[11px] font-bold text-zinc-400 block" data-ar="هندسة البوتات وتطوير الألعاب" data-en="Bots & Game Engineering">هندسة البوتات وتطوير الألعاب</span>
+        </div>
+      </a>
+
+      <!-- Section Anchors -->
+      <nav class="hidden md:flex items-center gap-1 text-xs font-extrabold">
+        <a href="#services" class="px-3.5 py-2 rounded-xl text-zinc-300 hover:text-[#00f5d4] hover:bg-white/5 transition" data-ar="// الخدمات البرمجية" data-en="// Services">// الخدمات البرمجية</a>
+        <a href="#projects" class="px-3.5 py-2 rounded-xl text-zinc-300 hover:text-[#00f5d4] hover:bg-white/5 transition" data-ar="// المشاريع الحية" data-en="// Projects">// المشاريع الحية</a>
+        <a href="#configurator" class="px-3.5 py-2 rounded-xl text-zinc-300 hover:text-[#00f5d4] hover:bg-white/5 transition" data-ar="// صمّم مشروعك" data-en="// Build Order">// صمّم مشروعك</a>
+        <a href="#reviews" class="px-3.5 py-2 rounded-xl text-zinc-300 hover:text-[#00f5d4] hover:bg-white/5 transition" data-ar="// التقييمات" data-en="// Vouches">// التقييمات</a>
+      </nav>
+
+      <!-- Actions: Sound + Lang + Live Discord -->
+      <div class="flex items-center gap-2">
+        <button onclick="toggleSound()" id="soundBtn" title="تفعيل / إيقاف الموسيقى" class="h-9 px-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 flex items-center gap-1.5 text-zinc-300 transition">
+          <span id="soundIcon" class="text-sm">🔇</span>
+          <span id="soundLabel" class="hidden sm:inline font-mono-code text-[10px] font-bold text-zinc-400">AUDIO</span>
         </button>
 
-        <nav class="hidden lg:flex items-center gap-1 text-xs font-extrabold">
-          <button onclick="switchView('home')" data-nav="home" class="nav-pill px-3.5 py-2 rounded-xl bg-blue-600/20 text-sky-400 transition" data-ar="الرئيسية" data-en="Home">الرئيسية</button>
-          <button onclick="switchView('store')" data-nav="store" class="nav-pill px-3.5 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 transition" data-ar="خدمات البرمجة" data-en="Dev Services">خدمات البرمجة</button>
-          <button onclick="switchView('works')" data-nav="works" class="nav-pill px-3.5 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 transition" data-ar="مشاريعي وأعمالي" data-en="Portfolio">مشاريعي وأعمالي</button>
-          <button onclick="switchView('reviews')" data-nav="reviews" class="nav-pill px-3.5 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 transition" data-ar="التقييمات" data-en="Reviews">التقييمات</button>
-          <button onclick="switchView('faq')" data-nav="faq" class="nav-pill px-3.5 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 transition" data-ar="الأسئلة" data-en="FAQ">الأسئلة</button>
-        </nav>
-      </div>
-
-      <!-- Left: Sound + Cart + Live Discord Pill -->
-      <div class="flex items-center gap-2.5">
-        <!-- Sound Button -->
-        <button onclick="toggleSound()" title="المؤثرات الصوتية" class="w-9 h-9 rounded-xl bg-[#0c1428] hover:bg-[#131f3d] border border-slate-800 flex items-center justify-center text-slate-300 transition">
-          <svg id="soundOffIcon" class="w-4 h-4 text-rose-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
-            <path stroke-linecap="round" stroke-linejoin="round" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" />
-          </svg>
-          <svg id="soundOnIcon" class="w-4 h-4 text-emerald-400 hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
-          </svg>
+        <button onclick="toggleLanguage()" id="langBtn" class="h-9 px-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 font-mono-code font-extrabold text-xs text-[#00f5d4] transition">
+          EN
         </button>
 
-        <!-- Quick Order Cart Badge -->
-        <button onclick="openCartDrawer()" class="relative h-9 px-3 rounded-xl bg-[#0c1428] hover:bg-[#131f3d] border border-slate-800 flex items-center gap-1.5 text-xs font-extrabold text-slate-200 transition">
-          <span>🛒</span>
-          <span class="hidden sm:inline" data-ar="طلباتي" data-en="Cart">طلباتي</span>
-          <span id="cartCountBadge" class="px-1.5 py-0.2 rounded-full bg-blue-600 text-white text-[10px] font-black">0</span>
-        </button>
-
-        <!-- Live Discord Profile Status Pill -->
-        <button onclick="switchView('contact')" class="flex items-center gap-2 bg-[#0c1428] hover:bg-[#131f3d] border border-slate-800 rounded-xl py-1 px-2.5 transition">
-          <div class="w-7 h-7 rounded-full bg-gradient-to-tr from-blue-500 to-indigo-500 p-0.5 overflow-hidden relative">
-            <img id="navAvatarImg" src="" alt="Ja7eem" class="hidden w-full h-full rounded-full object-cover" />
-            <div id="navAvatarFallback" class="w-full h-full rounded-full bg-[#060a14] flex items-center justify-center text-[10px] font-black text-sky-400">J7</div>
+        <!-- Live Discord Status Pill -->
+        <a href="#contact" class="flex items-center gap-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl py-1.5 px-3 transition">
+          <div class="relative w-7 h-7 rounded-full overflow-hidden bg-zinc-900 border border-[#00f5d4]/50 flex items-center justify-center">
+            <img id="navAvatarImg" src="" alt="Ja7eem" class="hidden w-full h-full object-cover" />
+            <span id="navAvatarFallback" class="font-mono-code text-[10px] font-black text-[#00f5d4]">J7</span>
           </div>
           <div class="hidden sm:flex items-center gap-1.5 text-xs font-bold">
-            <span id="navStatusDot" class="w-2 h-2 rounded-full bg-slate-500"></span>
-            <span id="navStatusText" class="text-slate-300" data-ar="غير متصل" data-en="Offline">غير متصل</span>
+            <span id="navStatusDot" class="w-2 h-2 rounded-full bg-zinc-500"></span>
+            <span id="navStatusText" class="text-zinc-300" data-ar="غير متصل" data-en="Offline">غير متصل</span>
           </div>
-        </button>
+        </a>
       </div>
     </div>
   </header>
 
-  <!-- Main Content Container -->
-  <main class="max-w-6xl mx-auto px-4 sm:px-6 pt-8 pb-28">
+  <main id="top" class="max-w-6xl mx-auto px-4 sm:px-6 pt-10 pb-28 space-y-24">
 
     <!-- ======================================================================
-         1. HOME VIEW (#home)
+         1. SPLIT INTERACTIVE HERO + LIVE CODE TERMINAL
     ====================================================================== -->
-    <section id="view-home" class="view-section active">
-      <!-- Premium Hero Section -->
-      <div class="pro-card p-6 sm:p-10 mb-8 relative">
-        <div class="flex flex-col lg:flex-row items-center justify-between gap-8">
-          <div class="text-center lg:text-start max-w-2xl">
-            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/30 text-sky-400 text-xs font-extrabold mb-4">
-              <span class="w-2 h-2 rounded-full bg-sky-400 animate-pulse"></span>
-              <span data-ar="استوديو تطوير البرمجيات • بوتات ديسكورد وألعاب" data-en="Software Development Studio • Discord Bots & Games">
-                استوديو تطوير البرمجيات • بوتات ديسكورد وألعاب
-              </span>
-            </div>
-
-            <h1 class="text-3xl sm:text-5xl font-black text-white leading-tight tracking-tight" data-ar="جحيم لبرمجة البوتات والألعاب" data-en="Ja7eem Bots & Game Development">
-              جحيم لبرمجة البوتات والألعاب
-            </h1>
-
-            <p class="text-sky-400 font-extrabold text-base sm:text-lg mt-2" data-ar="صلِّ على محمد ﷺ" data-en="Peace be upon Prophet Muhammad ﷺ">
-              صلِّ على محمد ﷺ
-            </p>
-
-            <p class="text-slate-300 text-xs sm:text-sm leading-relaxed mt-3 max-w-xl" data-ar="مطور برمجيات متخصص في بناء بوتات ديسكورد من الصفر (Node.js & Python) مع لوحات تحكم ويب احترافية، وتطوير وبرمجة الألعاب والأنظمة التفاعلية بأعلى جودة وأداء مستقر." data-en="Software developer specializing in custom Discord Bots from scratch (Node.js & Python) with Web Dashboards, and Game Development with clean, high-performance code.">
-              مطور برمجيات متخصص في بناء بوتات ديسكورد من الصفر (Node.js & Python) مع لوحات تحكم ويب احترافية، وتطوير وبرمجة الألعاب والأنظمة التفاعلية بأعلى جودة وأداء مستقر.
-            </p>
-
-            <div class="flex flex-wrap items-center justify-center lg:justify-start gap-3 mt-6">
-              <button onclick="switchView('store')" class="px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-black text-xs sm:text-sm shadow-lg shadow-blue-600/35 transition transform hover:-translate-y-0.5" data-ar="اطلب مشروع برمجي ⚡" data-en="Order a Dev Project ⚡">
-                اطلب مشروع برمجي ⚡
-              </button>
-              <button onclick="switchView('works')" class="px-6 py-3 rounded-xl bg-[#0d152a] hover:bg-[#14203f] border border-slate-700 text-white font-extrabold text-xs sm:text-sm transition" data-ar="استكشف أعمالي 💻" data-en="Explore Portfolio 💻">
-                استكشف أعمالي 💻
-              </button>
-            </div>
-          </div>
-
-          <!-- Owner Discord Identity Card (Live Synced) -->
-          <div onclick="switchView('contact')" class="cursor-pointer w-full sm:w-80 bg-[#060b17]/90 hover:bg-[#0a1224] border border-slate-800 hover:border-blue-500/50 rounded-3xl p-5 shadow-2xl transition group">
-            <div class="flex items-center gap-4">
-              <div class="relative shrink-0">
-                <div class="w-18 h-18 w-[72px] h-[72px] rounded-full p-[2.5px] bg-gradient-to-tr from-sky-400 via-blue-600 to-indigo-500 shadow-[0_0_25px_rgba(59,130,246,0.35)]">
-                  <div class="w-full h-full rounded-full bg-[#060a14] flex items-center justify-center overflow-hidden">
-                    <img id="heroAvatarImg" src="" alt="Ja7eem" class="hidden w-full h-full rounded-full object-cover" />
-                    <span id="heroAvatarFallback" class="text-xl font-black text-sky-400">J7</span>
-                  </div>
-                </div>
-                <span id="heroStatusDot" class="absolute bottom-0.5 right-0.5 w-4 h-4 rounded-full bg-slate-500 border-[3px] border-[#060b17]"></span>
-              </div>
-
-              <div class="text-start min-w-0">
-                <div class="flex items-center gap-1.5">
-                  <h2 id="heroOwnerName" class="font-black text-white text-lg truncate">Ja7eem</h2>
-                  <span class="px-1.5 py-0.5 rounded bg-blue-500/20 text-sky-400 text-[10px] font-black">OWNER</span>
-                </div>
-                <p id="heroStatusText" class="text-xs font-bold text-slate-400 mt-0.5" data-ar="غير متصل الآن" data-en="Offline Now">غير متصل الآن</p>
-                <p class="text-[11px] font-mono text-slate-500 mt-1" dir="ltr">ID: 853351545013272596</p>
-              </div>
-            </div>
-
-            <div class="grid grid-cols-3 gap-2 mt-5 pt-4 border-t border-slate-800/80 text-center">
-              <div>
-                <div class="text-sm font-black text-white">5000+</div>
-                <div class="text-[10px] text-slate-400 font-bold" data-ar="تقييم" data-en="Reviews">تقييم</div>
-              </div>
-              <div>
-                <div class="text-sm font-black text-emerald-400">100%</div>
-                <div class="text-[10px] text-slate-400 font-bold" data-ar="ضمان" data-en="Warranty">ضمان</div>
-              </div>
-              <div>
-                <div class="text-sm font-black text-sky-400">24/7</div>
-                <div class="text-[10px] text-slate-400 font-bold" data-ar="دعم فني" data-en="Support">دعم فني</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 6 Bento Grid Navigation Tiles -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-12">
-        <!-- 1. خدمات البرمجة -->
-        <div onclick="switchView('store')" class="bento-tile tile-blue flex flex-col justify-between min-h-[168px]">
-          <div class="flex items-center justify-between">
-            <span class="text-[11px] font-extrabold px-2.5 py-1 rounded-full bg-blue-500/15 text-sky-300 border border-blue-400/25" data-ar="كود نظيف 100%" data-en="100% Clean Code">كود نظيف 100%</span>
-            <div class="w-12 h-12 rounded-2xl bg-blue-500/20 border border-blue-400/35 flex items-center justify-center text-blue-300">
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
-            </div>
-          </div>
-          <div class="text-start mt-4">
-            <h2 class="text-2xl font-black text-white" data-ar="خدمات البرمجة" data-en="Dev Services">خدمات البرمجة</h2>
-            <p class="text-xs sm:text-sm text-slate-300 font-semibold mt-1" data-ar="برمجة بوتات ديسكورد • لوحات تحكم • برمجة ألعاب" data-en="Discord Bots • Web Dashboards • Game Dev">
-              برمجة بوتات ديسكورد • لوحات تحكم • برمجة ألعاب
-            </p>
-          </div>
+    <section class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center pt-4">
+      <div class="lg:col-span-7 text-center lg:text-start space-y-5">
+        <div class="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-[#00f5d4]/10 border border-[#00f5d4]/30 text-[#00f5d4] text-xs font-mono-code font-bold">
+          <span class="w-2 h-2 rounded-full bg-[#00f5d4] animate-ping"></span>
+          <span dir="ltr">SYSTEM.READY // BOTS & GAME ENGINE</span>
         </div>
 
-        <!-- 2. أعمالنا -->
-        <div onclick="switchView('works')" class="bento-tile tile-indigo flex flex-col justify-between min-h-[168px]">
-          <div class="flex items-center justify-between">
-            <span class="text-[11px] font-extrabold px-2.5 py-1 rounded-full bg-indigo-500/15 text-indigo-300 border border-indigo-400/25" data-ar="مشاريع حية" data-en="Live Projects">مشاريع حية</span>
-            <div class="w-12 h-12 rounded-2xl bg-indigo-500/20 border border-indigo-400/35 flex items-center justify-center text-indigo-300">
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-              </svg>
-            </div>
-          </div>
-          <div class="text-start mt-4">
-            <h2 class="text-2xl font-black text-white" data-ar="أعمالنا" data-en="Our Works">أعمالنا</h2>
-            <p class="text-xs sm:text-sm text-slate-300 font-semibold mt-1" data-ar="بوتات وأنظمة وألعاب برمجتها بنفسي" data-en="Bots, Systems & Games Built by Me">
-              بوتات وأنظمة وألعاب برمجتها بنفسي
-            </p>
-          </div>
-        </div>
+        <h1 class="text-4xl sm:text-6xl font-black leading-[1.15] tracking-tight">
+          <span class="block text-white" data-ar="أحوّل أفكارك إلى" data-en="Turning Ideas Into">أحوّل أفكارك إلى</span>
+          <span class="gradient-title block mt-1" data-ar="بوتات وألعاب احترافية" data-en="Powerful Bots & Games">بوتات وألعاب احترافية</span>
+        </h1>
 
-        <!-- 2. أعمالنا -->
-        <div onclick="switchView('works')" class="bento-tile tile-indigo flex flex-col justify-between min-h-[168px]">
-          <div class="flex items-center justify-between">
-            <span class="text-[11px] font-extrabold px-2.5 py-1 rounded-full bg-indigo-500/15 text-indigo-300 border border-indigo-400/25" data-ar="برمجة خاصة" data-en="Custom Dev">برمجة خاصة</span>
-            <div class="w-12 h-12 rounded-2xl bg-indigo-500/20 border border-indigo-400/35 flex items-center justify-center text-indigo-300">
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-              </svg>
-            </div>
-          </div>
-          <div class="text-start mt-4">
-            <h2 class="text-2xl font-black text-white" data-ar="أعمالنا" data-en="Our Works">أعمالنا</h2>
-            <p class="text-xs sm:text-sm text-slate-300 font-semibold mt-1" data-ar="بوتات ديسكورد ولوحات تحكم برمجتها بنفسي" data-en="Discord Bots & Dashboards Built by Me">
-              بوتات ديسكورد ولوحات تحكم برمجتها بنفسي
-            </p>
-          </div>
-        </div>
-
-        <!-- 3. التقييمات -->
-        <div onclick="switchView('reviews')" class="bento-tile tile-amber flex flex-col justify-between min-h-[168px]">
-          <div class="flex items-center justify-between">
-            <span class="text-[11px] font-extrabold px-2.5 py-1 rounded-full bg-amber-500/15 text-amber-300 border border-amber-400/25" data-ar="موثق 100%" data-en="100% Verified">موثق 100%</span>
-            <div class="w-12 h-12 rounded-2xl bg-amber-500/20 border border-amber-400/35 flex items-center justify-center text-amber-300">
-              <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-              </svg>
-            </div>
-          </div>
-          <div class="text-start mt-4">
-            <h2 class="text-2xl font-black text-white" data-ar="التقييمات" data-en="Reviews">التقييمات</h2>
-            <p class="text-xs sm:text-sm text-slate-300 font-semibold mt-1" data-ar="5000+ تقييم حقيقي من عملائنا" data-en="5000+ Real Customer Vouches">
-              5000+ تقييم حقيقي من عملائنا
-            </p>
-          </div>
-        </div>
-
-        <!-- 4. مجتمعنا -->
-        <div onclick="switchView('community')" class="bento-tile tile-emerald flex flex-col justify-between min-h-[168px]">
-          <div class="flex justify-end">
-            <div class="w-12 h-12 rounded-2xl bg-emerald-500/20 border border-emerald-400/35 flex items-center justify-center text-emerald-300">
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
-            </div>
-          </div>
-          <div class="text-start mt-4">
-            <h2 class="text-2xl font-black text-white" data-ar="مجتمعنا" data-en="Community">مجتمعنا</h2>
-            <p class="text-xs sm:text-sm text-slate-300 font-semibold mt-1" data-ar="سيرفر المطورين والدعم الفني" data-en="Developers & Support Server">
-              سيرفر المطورين والدعم الفني
-            </p>
-          </div>
-        </div>
-
-        <!-- 5. الأسئلة -->
-        <div onclick="switchView('faq')" class="bento-tile tile-cyan flex flex-col justify-between min-h-[168px]">
-          <div class="flex justify-end">
-            <div class="w-12 h-12 rounded-2xl bg-cyan-500/20 border border-cyan-400/35 flex items-center justify-center text-cyan-300">
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-          </div>
-          <div class="text-start mt-4">
-            <h2 class="text-2xl font-black text-white" data-ar="الأسئلة" data-en="FAQ">الأسئلة</h2>
-            <p class="text-xs sm:text-sm text-slate-300 font-semibold mt-1" data-ar="إجابات سريعة وطرق الضمان" data-en="Quick Answers & Guarantee">
-              إجابات سريعة وطرق الضمان
-            </p>
-          </div>
-        </div>
-
-        <!-- 6. تواصل -->
-        <div onclick="switchView('contact')" class="bento-tile tile-fuchsia flex flex-col justify-between min-h-[168px]">
-          <div class="flex justify-end">
-            <div class="w-12 h-12 rounded-2xl bg-fuchsia-500/20 border border-fuchsia-400/35 flex items-center justify-center text-fuchsia-300">
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-              </svg>
-            </div>
-          </div>
-          <div class="text-start mt-4">
-            <h2 class="text-2xl font-black text-white" data-ar="تواصل" data-en="Contact">تواصل</h2>
-            <p class="text-xs sm:text-sm text-slate-300 font-semibold mt-1" data-ar="ديسكورد • واتساب 01121020801" data-en="Discord • WhatsApp 01121020801">
-              ديسكورد • واتساب 01121020801
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Home Reviews Strip -->
-      <div>
-        <div class="flex items-center justify-between mb-4">
-          <div class="flex items-center gap-2">
-            <span class="text-amber-400 text-lg">★</span>
-            <h3 class="font-extrabold text-base sm:text-lg text-white" data-ar="آراء عملائنا" data-en="Customer Reviews">آراء عملائنا</h3>
-          </div>
-          <button onclick="switchView('reviews')" class="text-sky-400 hover:text-sky-300 text-xs sm:text-sm font-bold transition" data-ar="شوف الكل ‹" data-en="View All ›">
-            شوف الكل ‹
-          </button>
-        </div>
-        <div id="homeReviewsRow" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
-      </div>
-    </section>
-
-    <!-- ======================================================================
-         2. PROGRAMMING SERVICES VIEW (#store)
-    ====================================================================== -->
-    <section id="view-store" class="view-section">
-      <div class="text-center mb-8">
-        <h1 class="text-3xl sm:text-4xl font-black text-white" data-ar="خدمات البرمجة وتطوير الألعاب" data-en="Programming & Game Development Services">خدمات البرمجة وتطوير الألعاب</h1>
-        <p class="text-slate-400 text-sm font-semibold mt-1.5" data-ar="اختر التخصص البرمجي المناسب لمشروعك وتواصل معي لبدء التنفيذ فوراً" data-en="Select the development service you need and contact me to start building">
-          اختر التخصص البرمجي المناسب لمشروعك وتواصل معي لبدء التنفيذ فوراً
+        <p class="text-sm sm:text-base text-zinc-400 leading-relaxed max-w-2xl mx-auto lg:mx-0" data-ar="استوديو جحيم للبرمجة — متخصص حصرياً في برمجة بوتات ديسكورد المتقدمة من الصفر (Node.js / Python) مع لوحات تحكم ويب تفاعلية، وتطوير الألعاب ثنائية وثلاثية الأبعاد بأداء فائق وكود نظيف 100%." data-en="Ja7eem Dev Studio — Exclusively specialized in engineering custom Discord Bots from scratch (Node.js / Python) with Web Dashboards, and 2D/3D Game Development with 100% clean, high-performance code.">
+          استوديو جحيم للبرمجة — متخصص حصرياً في برمجة بوتات ديسكورد المتقدمة من الصفر (Node.js / Python) مع لوحات تحكم ويب تفاعلية، وتطوير الألعاب ثنائية وثلاثية الأبعاد بأداء فائق وكود نظيف 100%.
         </p>
 
-        <!-- Category Filter Tabs -->
-        <div class="flex flex-wrap items-center justify-center gap-2 mt-6">
-          <button onclick="filterStore('all', this)" class="store-tab px-4 py-2 rounded-xl bg-blue-600 text-white text-xs font-extrabold transition">الكل (All)</button>
-          <button onclick="filterStore('discord_bots', this)" class="store-tab px-4 py-2 rounded-xl bg-[#0c1428] border border-slate-800 text-slate-300 hover:text-white text-xs font-extrabold transition">🤖 برمجة بوتات ديسكورد</button>
-          <button onclick="filterStore('dashboards', this)" class="store-tab px-4 py-2 rounded-xl bg-[#0c1428] border border-slate-800 text-slate-300 hover:text-white text-xs font-extrabold transition">🎛️ لوحات تحكم ويب (Dashboards)</button>
-          <button onclick="filterStore('game_dev', this)" class="store-tab px-4 py-2 rounded-xl bg-[#0c1428] border border-slate-800 text-slate-300 hover:text-white text-xs font-extrabold transition">🎮 تطوير وبرمجة الألعاب</button>
-          <button onclick="filterStore('integrations', this)" class="store-tab px-4 py-2 rounded-xl bg-[#0c1428] border border-slate-800 text-slate-300 hover:text-white text-xs font-extrabold transition">🔗 أنظمة OAuth2 وقواعد البيانات</button>
+        <!-- Tech Stack Badges -->
+        <div class="flex flex-wrap items-center justify-center lg:justify-start gap-2 pt-1 font-mono-code text-[11px]" dir="ltr">
+          <span class="px-3 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 font-bold">Node.js / Discord.js v14</span>
+          <span class="px-3 py-1 rounded-lg bg-sky-500/10 border border-sky-500/30 text-sky-300 font-bold">Python / Pycord</span>
+          <span class="px-3 py-1 rounded-lg bg-purple-500/10 border border-purple-500/30 text-purple-300 font-bold">Three.js / HTML5 Canvas</span>
+          <span class="px-3 py-1 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-300 font-bold">SQLite / OAuth2 API</span>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-center lg:justify-start gap-3.5 pt-3">
+          <a href="#configurator" class="px-7 py-3.5 rounded-xl bg-[#00f5d4] hover:bg-[#00d9bc] text-black font-black text-xs sm:text-sm shadow-[0_0_30px_rgba(0,245,212,0.35)] transition transform hover:-translate-y-0.5" data-ar="ابدأ بناء مشروعك الآن ⚡" data-en="Start Your Project ⚡">
+            ابدأ بناء مشروعك الآن ⚡
+          </a>
+          <a href="#projects" class="px-7 py-3.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/15 text-white font-extrabold text-xs sm:text-sm transition" data-ar="استعراض المشاريع الحية" data-en="Explore Live Projects">
+            استعراض المشاريع الحية
+          </a>
         </div>
       </div>
 
-      <!-- Products Cards Grid -->
-      <div id="storeProductsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-8"></div>
-
-      <!-- Payment Methods & Guarantees Footer Cards -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-        <div class="pro-card p-6 flex items-center justify-between gap-4">
-          <div class="text-start">
-            <h3 class="text-xl font-black text-white mb-1">طرق الدفع المتاحة</h3>
-            <p class="text-xs text-slate-400 mb-3">تحويلات محلية ودولية آمنة وسريعة</p>
-            <div class="flex flex-wrap gap-1.5">
-              <span class="text-[11px] bg-[#060b17] border border-slate-800 px-2.5 py-1 rounded-full flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-red-500"></span>فودافون كاش</span>
-              <span class="text-[11px] bg-[#060b17] border border-slate-800 px-2.5 py-1 rounded-full flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-orange-500"></span>أورنج كاش</span>
-              <span class="text-[11px] bg-[#060b17] border border-slate-800 px-2.5 py-1 rounded-full flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-purple-500"></span>وي كاش</span>
-              <span class="text-[11px] bg-[#060b17] border border-slate-800 px-2.5 py-1 rounded-full flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-indigo-400"></span>إنستا باي</span>
-              <span class="text-[11px] bg-[#060b17] border border-slate-800 px-2.5 py-1 rounded-full flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-400"></span>USDT</span>
-              <span class="text-[11px] bg-[#060b17] border border-slate-800 px-2.5 py-1 rounded-full flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-sky-400"></span>LTC</span>
+      <!-- Interactive Live Terminal + Developer Card -->
+      <div class="lg:col-span-5 space-y-4">
+        <div class="cyber-card p-5 flex items-center justify-between gap-4">
+          <div class="flex items-center gap-3.5">
+            <div class="relative w-16 h-16 rounded-2xl p-[2px] bg-gradient-to-tr from-[#00f5d4] to-[#8b5cf6] shrink-0">
+              <div class="w-full h-full rounded-[14px] bg-[#06080d] flex items-center justify-center overflow-hidden">
+                <img id="heroAvatarImg" src="" alt="Ja7eem" class="hidden w-full h-full object-cover" />
+                <span id="heroAvatarFallback" class="font-mono-code text-lg font-black text-[#00f5d4]">J7</span>
+              </div>
+              <span id="heroStatusDot" class="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-zinc-500 border-[3px] border-[#090b10]"></span>
+            </div>
+            <div class="text-start">
+              <div class="flex items-center gap-2">
+                <h2 id="heroOwnerName" class="font-black text-white text-lg">Ja7eem</h2>
+                <span class="font-mono-code text-[10px] px-2 py-0.5 rounded bg-[#00f5d4]/15 text-[#00f5d4] font-bold">LEAD DEV</span>
+              </div>
+              <p id="heroStatusText" class="text-xs font-bold text-zinc-400 mt-0.5" data-ar="غير متصل الآن" data-en="Offline Now">غير متصل الآن</p>
+              <button onclick="copyText('853351545013272596')" class="font-mono-code text-[11px] text-zinc-500 hover:text-[#00f5d4] mt-1 block transition" dir="ltr">
+                ID: 853351545013272596 📋
+              </button>
             </div>
           </div>
-          <div class="w-20 h-20 rounded-2xl bg-blue-950/60 border border-blue-500/30 flex items-center justify-center text-3xl shrink-0">💳</div>
+          <div class="text-center px-3 py-2 rounded-xl bg-white/5 border border-white/10">
+            <div class="font-mono-code text-lg font-black text-[#00f5d4]">0</div>
+            <div class="text-[10px] text-zinc-400 font-bold" data-ar="بداية جديدة" data-en="Fresh Start">بداية جديدة</div>
+          </div>
         </div>
 
-        <div class="pro-card p-6 flex items-center justify-between gap-4">
-          <div class="text-start">
-            <h3 class="text-xl font-black text-white mb-1">مميزات البرمجة معنا</h3>
-            <p class="text-xs text-slate-400 mb-3">تسليم السورس كود الكامل مع دعم فني</p>
-            <div class="flex flex-wrap gap-2">
-              <span class="text-xs bg-[#060b17] border border-slate-800 px-3 py-1.5 rounded-xl font-bold text-sky-400">💻 تسليم السورس كود</span>
-              <span class="text-xs bg-[#060b17] border border-slate-800 px-3 py-1.5 rounded-xl font-bold text-emerald-400">⚡ أداء سريع بدون لاج</span>
-              <span class="text-xs bg-[#060b17] border border-slate-800 px-3 py-1.5 rounded-xl font-bold text-amber-400">🛠️ صيانة وتطوير</span>
+        <!-- Live Interactive Terminal -->
+        <div class="terminal-shell rounded-2xl overflow-hidden" dir="ltr">
+          <div class="bg-white/5 px-4 py-2.5 border-b border-white/10 flex items-center justify-between">
+            <div class="flex items-center gap-1.5">
+              <span class="w-3 h-3 rounded-full bg-rose-500"></span>
+              <span class="w-3 h-3 rounded-full bg-amber-400"></span>
+              <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
             </div>
+            <span class="font-mono-code text-[11px] text-zinc-400">ja7eem@dev-engine:~</span>
+            <button onclick="runTerminalDemo()" class="font-mono-code text-[10px] px-2 py-0.5 rounded bg-[#00f5d4]/20 text-[#00f5d4] hover:bg-[#00f5d4] hover:text-black font-bold transition">
+              ▶ RUN TEST
+            </button>
           </div>
-          <div class="w-20 h-20 rounded-2xl bg-emerald-950/60 border border-emerald-500/30 flex items-center justify-center text-3xl shrink-0">🛡️</div>
+          <div id="terminalOutput" class="p-4 font-mono-code text-xs leading-relaxed text-zinc-300 h-48 overflow-y-auto space-y-1.5">
+            <div class="text-[#00f5d4]">$ init ja7eem-studio --mode=production</div>
+            <div class="text-zinc-400">[OK] Discord.js v14 & Python Bot Core loaded.</div>
+            <div class="text-zinc-400">[OK] 2D/3D WebGL Game Engine initialized.</div>
+            <div class="text-zinc-400">[OK] Source Code Delivery & 24/7 Support active.</div>
+            <div class="text-amber-300">Ready for your custom bot or game order...</div>
+          </div>
         </div>
       </div>
     </section>
 
     <!-- ======================================================================
-         3. OUR WORKS / BOTS VIEW (#works)
+         2. PURE PROGRAMMING & GAME DEV SERVICES (#services)
     ====================================================================== -->
-    <section id="view-works" class="view-section">
-      <div class="text-center mb-9">
-        <h1 class="text-3xl sm:text-4xl font-black text-white">أعمالنا ومشاريعنا البرمجية</h1>
-        <p class="text-slate-400 text-sm font-semibold mt-1.5">بوتات ديسكورد وأنظمة وألعاب من تطويري، وأقدر أبرمج أي فكرة تحتاجها</p>
-      </div>
-      </div>
-
-      <!-- Products Cards Grid -->
-      <div id="storeProductsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-8"></div>
-
-      <!-- Payment Methods & Guarantees Footer Cards -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-        <div class="pro-card p-6 flex items-center justify-between gap-4">
-          <div class="text-start">
-            <h3 class="text-xl font-black text-white mb-1">طرق الدفع المتاحة</h3>
-            <p class="text-xs text-slate-400 mb-3">تحويلات محلية ودولية آمنة وسريعة</p>
-            <div class="flex flex-wrap gap-1.5">
-              <span class="text-[11px] bg-[#060b17] border border-slate-800 px-2.5 py-1 rounded-full flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-red-500"></span>فودافون كاش</span>
-              <span class="text-[11px] bg-[#060b17] border border-slate-800 px-2.5 py-1 rounded-full flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-orange-500"></span>أورنج كاش</span>
-              <span class="text-[11px] bg-[#060b17] border border-slate-800 px-2.5 py-1 rounded-full flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-purple-500"></span>وي كاش</span>
-              <span class="text-[11px] bg-[#060b17] border border-slate-800 px-2.5 py-1 rounded-full flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-indigo-400"></span>إنستا باي</span>
-              <span class="text-[11px] bg-[#060b17] border border-slate-800 px-2.5 py-1 rounded-full flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-400"></span>USDT</span>
-              <span class="text-[11px] bg-[#060b17] border border-slate-800 px-2.5 py-1 rounded-full flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-sky-400"></span>LTC</span>
-            </div>
-          </div>
-          <div class="w-20 h-20 rounded-2xl bg-blue-950/60 border border-blue-500/30 flex items-center justify-center text-3xl shrink-0">💳</div>
+    <section id="services" class="space-y-8">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-white/10 pb-5">
+        <div class="text-start">
+          <span class="font-mono-code text-xs text-[#00f5d4] font-bold" dir="ltr">// 01. DEVELOPMENT SERVICES</span>
+          <h2 class="text-3xl sm:text-4xl font-black text-white mt-1" data-ar="تخصصات البرمجة والتطوير" data-en="Development Specializations">تخصصات البرمجة والتطوير</h2>
         </div>
 
-        <div class="pro-card p-6 flex items-center justify-between gap-4">
-          <div class="text-start">
-            <h3 class="text-xl font-black text-white mb-1">مميزات متجر جحيم</h3>
-            <p class="text-xs text-slate-400 mb-3">ضمان كامل على كل منتج أو خدمة</p>
-            <div class="flex flex-wrap gap-2">
-              <span class="text-xs bg-[#060b17] border border-slate-800 px-3 py-1.5 rounded-xl font-bold text-sky-400">⚡ تسليم فوري</span>
-              <span class="text-xs bg-[#060b17] border border-slate-800 px-3 py-1.5 rounded-xl font-bold text-emerald-400">🛡️ بدون سحب 100%</span>
-              <span class="text-xs bg-[#060b17] border border-slate-800 px-3 py-1.5 rounded-xl font-bold text-amber-400">🎧 دعم 24/7</span>
+        <!-- Filter Tabs -->
+        <div class="flex flex-wrap gap-2">
+          <button onclick="filterServices('all', this)" class="srv-tab px-4 py-2 rounded-xl bg-[#00f5d4] text-black font-black text-xs transition">الكل</button>
+          <button onclick="filterServices('bots', this)" class="srv-tab px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-zinc-300 hover:text-white font-bold text-xs transition">🤖 بوتات ديسكورد</button>
+          <button onclick="filterServices('games', this)" class="srv-tab px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-zinc-300 hover:text-white font-bold text-xs transition">🎮 تطوير الألعاب</button>
+          <button onclick="filterServices('web', this)" class="srv-tab px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-zinc-300 hover:text-white font-bold text-xs transition">🎛️ لوحات التحكم والـ API</button>
+        </div>
+      </div>
+
+      <div id="servicesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"></div>
+    </section>
+
+    <!-- ======================================================================
+         3. LIVE PROJECTS — ONLY SUGAR'S SYSTEM (#projects)
+    ====================================================================== -->
+    <section id="projects" class="space-y-8">
+      <div class="border-b border-white/10 pb-5 text-start">
+        <span class="font-mono-code text-xs text-[#8b5cf6] font-bold" dir="ltr">// 02. FLAGSHIP PROJECT</span>
+        <h2 class="text-3xl sm:text-4xl font-black text-white mt-1" data-ar="مشاريعنا البرمجية المعتمدة" data-en="Featured Engineering Project">مشاريعنا البرمجية المعتمدة</h2>
+      </div>
+
+      <div class="cyber-card p-6 sm:p-8 border-[#8b5cf6]/35">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div class="text-start space-y-3 max-w-2xl">
+            <div class="flex items-center gap-2.5">
+              <span class="font-mono-code text-[11px] px-3 py-1 rounded-full bg-[#8b5cf6]/20 border border-[#8b5cf6]/40 text-purple-300 font-bold">PRODUCTION v2.0</span>
+              <span class="font-mono-code text-[11px] text-emerald-400 font-bold">● ACTIVE SYSTEM</span>
+            </div>
+            <h3 class="text-2xl sm:text-3xl font-black text-white">Sugar's Multi-Server System</h3>
+            <p class="text-xs sm:text-sm text-zinc-300 leading-relaxed">
+              منظومة إدارية وأمنية متكاملة لسيرفرات الديسكورد مبنية بـ Node.js و SQLite، تشمل لوحة تحكم ويب شاملة للمالك (Admin Dashboard)، نظام ربط وتأمين الحسابات عبر Discord OAuth2، نظام الشعارات والفونتات التلقائية للأعضاء، وفك الحظر الجماعي مع التقارير المفصلة.
+            </p>
+            <div class="flex flex-wrap gap-2 pt-2 font-mono-code text-[11px]" dir="ltr">
+              <span class="px-3 py-1 rounded-lg bg-white/5 border border-white/10 text-[#00f5d4]">Admin Web Dashboard</span>
+              <span class="px-3 py-1 rounded-lg bg-white/5 border border-white/10 text-zinc-200">Discord OAuth2 Pool</span>
+              <span class="px-3 py-1 rounded-lg bg-white/5 border border-white/10 text-zinc-200">/auto-tag & Unicode Fonts</span>
+              <span class="px-3 py-1 rounded-lg bg-white/5 border border-white/10 text-zinc-200">/unban-all & /toggle-command</span>
             </div>
           </div>
-          <div class="w-20 h-20 rounded-2xl bg-emerald-950/60 border border-emerald-500/30 flex items-center justify-center text-3xl shrink-0">🛡️</div>
+
+          <div class="flex flex-col items-center justify-center gap-3 shrink-0 bg-white/5 border border-white/10 rounded-2xl p-6 min-w-[210px]">
+            <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#00f5d4]/20 to-[#8b5cf6]/20 border border-[#00f5d4]/40 flex items-center justify-center text-3xl">
+              🛡️
+            </div>
+            <button onclick="selectServiceForBuilder('بوت ديسكورد متكامل (Discord Bot)')" class="w-full py-2.5 px-4 rounded-xl bg-[#00f5d4] hover:bg-[#00d9bc] text-black font-black text-xs transition">
+              اطلب نظاماً مشابهاً ⚡
+            </button>
+          </div>
         </div>
       </div>
     </section>
 
     <!-- ======================================================================
-         3. OUR WORKS / BOTS VIEW (#works)
+         4. INTERACTIVE PROJECT CONFIGURATOR (#configurator)
     ====================================================================== -->
-    <section id="view-works" class="view-section">
-      <div class="text-center mb-9">
-        <h1 class="text-3xl sm:text-4xl font-black text-white">أعمالنا وبوتاتنا</h1>
-        <p class="text-slate-400 text-sm font-semibold mt-1.5">بوتات ديسكورد متطورة ولوحات تحكم من تطويري، وأقدر أبرمج أي بوت تحتاجه</p>
-      </div>
+    <section id="configurator" class="cyber-card p-6 sm:p-10 border-[#00f5d4]/30">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        <div class="lg:col-span-7 text-start space-y-4">
+          <span class="font-mono-code text-xs text-[#00f5d4] font-bold" dir="ltr">// 03. CUSTOM PROJECT BUILDER</span>
+          <h2 class="text-3xl font-black text-white" data-ar="صمّم طلبك البرمجي وأرسله فوراً" data-en="Configure & Send Your Dev Order">صمّم طلبك البرمجي وأرسله فوراً</h2>
+          <p class="text-xs sm:text-sm text-zinc-400">
+            حدد نوع المشروع والمميزات اللي تحتاجها، وهيتجهز ملخص طلبك تلقائياً لإرساله لي على واتساب أو ديسكورد.
+          </p>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-        <!-- Sugar's Multi-Server System -->
-        <div class="pro-card p-6 flex flex-col justify-between">
-          <div>
-            <div class="flex items-start justify-between gap-4 mb-4">
-              <div class="text-start">
-                <span class="text-[10px] font-black uppercase px-2 py-0.5 rounded bg-blue-500/20 text-sky-400">FLAGSHIP BOT</span>
-                <h3 class="text-2xl font-black text-white mt-1">Sugar's System</h3>
-                <span class="text-xs font-bold text-slate-400">بوت إدارة وحماية + لوحة تحكم ويب</span>
-              </div>
-              <div class="w-16 h-16 rounded-2xl bg-blue-950 border border-blue-500/40 flex items-center justify-center text-3xl shrink-0">⚙️</div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+            <div>
+              <label class="block text-xs font-bold text-zinc-300 mb-1.5">نوع المشروع البرمجي</label>
+              <select id="cfgType" onchange="updateOrderPreview()" class="w-full bg-[#06080d] border border-white/15 rounded-xl px-3.5 py-2.5 text-xs font-bold text-white outline-none focus:border-[#00f5d4]">
+                <option value="بوت ديسكورد متكامل (Discord Bot)">🤖 بوت ديسكورد متكامل (Discord Bot)</option>
+                <option value="بوت ديسكورد + لوحة تحكم ويب (Bot + Dashboard)">🎛️ بوت ديسكورد + لوحة تحكم ويب</option>
+                <option value="برمجة لعبة 2D / 3D (Game Development)">🎮 برمجة لعبة 2D / 3D تفاعلية</option>
+                <option value="تعديل أو إصلاح كود بوت قائم (Fix & Upgrade)">⚡ تعديل أو تطوير كود بوت قائم</option>
+              </select>
             </div>
-            <p class="text-xs text-slate-300 leading-relaxed mb-4 text-start">
-              منظومة إدارية متكاملة للسيرفرات تدعم الربط الخارجي عبر OAuth2، الشعارات والفونتات التلقائية، فك الحظر الجماعي، ولوحة تحكم ويب كاملة للمالك.
-            </p>
+
+            <div>
+              <label class="block text-xs font-bold text-zinc-300 mb-1.5">لغة البرمجة المفضلة</label>
+              <select id="cfgLang" onchange="updateOrderPreview()" class="w-full bg-[#06080d] border border-white/15 rounded-xl px-3.5 py-2.5 text-xs font-bold text-white outline-none focus:border-[#00f5d4]">
+                <option value="Node.js (Discord.js v14)">Node.js (Discord.js v14)</option>
+                <option value="Python (discord.py / Pycord)">Python (discord.py / Pycord)</option>
+                <option value="JavaScript / Three.js / HTML5">JavaScript / Three.js / HTML5</option>
+                <option value="حسب ترشيح المبرمج">حسب ترشيح المبرمج (الأفضل للأداء)</option>
+              </select>
+            </div>
           </div>
-          <div class="flex flex-wrap gap-1.5">
-            <span class="text-[11px] bg-[#060b17] border border-slate-800 px-2.5 py-1 rounded-full text-sky-300 font-semibold">Web Dashboard</span>
-            <span class="text-[11px] bg-[#060b17] border border-slate-800 px-2.5 py-1 rounded-full text-slate-200 font-semibold">OAuth2 Verification</span>
-            <span class="text-[11px] bg-[#060b17] border border-slate-800 px-2.5 py-1 rounded-full text-slate-200 font-semibold">/auto-tag</span>
-            <span class="text-[11px] bg-[#060b17] border border-slate-800 px-2.5 py-1 rounded-full text-slate-200 font-semibold">/unban-all</span>
+
+          <div>
+            <label class="block text-xs font-bold text-zinc-300 mb-1.5">تفاصيل الفكرة أو الأوامر المطلوبة</label>
+            <textarea id="cfgNotes" oninput="updateOrderPreview()" rows="3" placeholder="اكتب باختصار فكرة البوت أو اللعبة والمميزات اللي محتاجها..." class="w-full bg-[#06080d] border border-white/15 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-[#00f5d4]"></textarea>
           </div>
         </div>
 
-        <!-- Ja7eem Broadcast -->
-        <div class="pro-card p-6 flex flex-col justify-between">
-          <div>
-            <div class="flex items-start justify-between gap-4 mb-4">
-              <div class="text-start">
-                <span class="text-[10px] font-black uppercase px-2 py-0.5 rounded bg-lime-500/20 text-lime-400">BROADCAST</span>
-                <h3 class="text-2xl font-black text-white mt-1">Ja7eem Broadcast</h3>
-                <span class="text-xs font-bold text-slate-400">بوت برودكاست ذكي وسريع</span>
-              </div>
-              <div class="w-16 h-16 rounded-2xl bg-black border border-lime-400/40 flex items-center justify-center font-black text-lime-400 text-xl shrink-0">JB</div>
-            </div>
-            <p class="text-xs text-slate-300 leading-relaxed mb-4 text-start">
-              إرسال الإعلانات والرسائل لأعضاء السيرفر أو رتب محددة دفعة واحدة بنظام حماية ضد الباند وتقارير تسليم دقيقة.
-            </p>
+        <!-- Live Order Summary Box -->
+        <div class="lg:col-span-5 bg-[#05070c] border border-white/10 rounded-2xl p-6 text-start space-y-4">
+          <div class="flex items-center justify-between border-b border-white/10 pb-3">
+            <span class="font-mono-code text-xs font-bold text-[#00f5d4]">ORDER_PAYLOAD.JSON</span>
+            <span class="text-[11px] text-emerald-400 font-bold">● شامل السورس كود</span>
           </div>
-          <div class="flex flex-wrap gap-1.5">
-            <span class="text-[11px] bg-[#060b17] border border-slate-800 px-2.5 py-1 rounded-full text-lime-300 font-semibold">برودكاست للرتب</span>
-            <span class="text-[11px] bg-[#060b17] border border-slate-800 px-2.5 py-1 rounded-full text-slate-200 font-semibold">تخصيص Embed</span>
-            <span class="text-[11px] bg-[#060b17] border border-slate-800 px-2.5 py-1 rounded-full text-slate-200 font-semibold">حماية Rate-Limit</span>
-          </div>
-        </div>
 
-        <!-- Ja7eem Islamic -->
-        <div class="pro-card p-6 flex flex-col justify-between">
-          <div>
-            <div class="flex items-start justify-between gap-4 mb-3">
-              <div class="text-start">
-                <span class="text-[10px] font-black uppercase px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-400">ISLAMIC BOT</span>
-                <h3 class="text-2xl font-black text-white mt-1">Ja7eem Islamic</h3>
-                <span class="text-xs font-bold text-slate-400">بوت أذكار وإذاعة قرآن 24/7</span>
-              </div>
-              <div class="w-16 h-16 rounded-2xl bg-cyan-950 border border-cyan-500/40 flex items-center justify-center text-3xl shrink-0">🕌</div>
-            </div>
-            <p class="text-xs text-slate-300 leading-relaxed mb-3 text-start">
-              نشر الأذكار التلقائية في الرومات وتشغيل إذاعة القرآن الكريم في الرومات الصوتية على مدار الساعة.
-            </p>
-          </div>
-          <div onclick="nextDhikr()" class="cursor-pointer bg-[#060b17] hover:bg-[#0b1326] border border-slate-800 hover:border-sky-500/40 rounded-2xl p-3 text-center transition">
-            <div class="text-[10px] font-bold text-sky-400 mb-1">ذِكر • اضغط للتغيير</div>
-            <p id="dhikrText" class="text-xs font-bold text-white leading-relaxed">
-              لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ
-            </p>
+          <pre id="orderPayloadPreview" class="font-mono-code text-[11px] text-zinc-300 bg-black/50 p-3.5 rounded-xl overflow-x-auto whitespace-pre-wrap leading-relaxed"></pre>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+            <button onclick="sendOrderWhatsApp()" class="py-3 px-4 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-black text-xs transition">
+              إرسال عبر واتساب 💬
+            </button>
+            <button onclick="sendOrderDiscord()" class="py-3 px-4 rounded-xl bg-[#5865F2] hover:bg-[#4752C4] text-white font-black text-xs transition">
+              نسخ وفتح ديسكورد 🚀
+            </button>
           </div>
         </div>
       </div>
+    </section>
 
-      <!-- Custom Bot / Game Request Banner -->
-      <div class="pro-card p-6 sm:p-8 mt-6 flex flex-col sm:flex-row items-center justify-between gap-6">
-        <div class="text-center sm:text-start">
-          <h3 class="text-2xl font-black text-white">عندك فكرة بوت ديسكورد أو لعبة تريد برمجتها؟</h3>
-          <p class="text-xs sm:text-sm text-slate-300 mt-1.5 max-w-xl">
-            أبرمج لك أي بوت ديسكورد من الصفر بـ Node.js أو Python أو لعبة تفاعلية مع قاعدة بيانات ولوحة تحكم ويب حسب مواصفاتك بالضبط.
+    <!-- ======================================================================
+         5. CLEAN START REVIEWS SECTION (#reviews)
+    ====================================================================== -->
+    <section id="reviews" class="space-y-6">
+      <div class="flex items-center justify-between border-b border-white/10 pb-4">
+        <div class="text-start">
+          <span class="font-mono-code text-xs text-amber-400 font-bold" dir="ltr">// 04. CLIENT REVIEWS (0)</span>
+          <h2 class="text-2xl sm:text-3xl font-black text-white mt-1" data-ar="آراء العملاء وأصحاب السيرفرات" data-en="Client & Server Owner Reviews">آراء العملاء وأصحاب السيرفرات</h2>
+        </div>
+        <div class="font-mono-code text-zinc-400 font-black text-sm">0 REVIEWS</div>
+      </div>
+
+      <div class="cyber-card p-8 text-center space-y-3">
+        <div class="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 text-xl mx-auto">
+          ✨
+        </div>
+        <h3 class="text-lg font-black text-white">انطلاقة جديدة — 0 تقييمات حتى الآن</h3>
+        <p class="text-xs sm:text-sm text-zinc-400 max-w-md mx-auto">
+          تم تصفير التقييمات لبداية جديدة لاستوديو جحيم للبرمجة وتطوير الألعاب. اطلب مشروعك الآن وكن أول عميل يشارك تجربته هنا.
+        </p>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         6. DIRECT CONTACT & PAYMENT METHODS (#contact)
+    ====================================================================== -->
+    <section id="contact" class="grid grid-cols-1 md:grid-cols-3 gap-5">
+      <!-- Discord Direct -->
+      <div class="cyber-card p-6 flex flex-col justify-between text-start">
+        <div>
+          <div class="w-12 h-12 rounded-2xl bg-[#5865F2]/15 border border-[#5865F2]/40 flex items-center justify-center text-[#5865F2] text-2xl mb-4">💬</div>
+          <h3 class="text-xl font-black text-white">تواصل ديسكورد</h3>
+          <p id="contactDiscordTag" onclick="copyText('853351545013272596')" class="font-mono-code text-xs text-zinc-400 hover:text-[#00f5d4] cursor-pointer mt-1" dir="ltr">ID: 853351545013272596 📋</p>
+          <p class="text-xs text-zinc-400 mt-3 leading-relaxed">
+            التواصل الأساسي لمناقشة تفاصيل البوتات والألعاب وإرسال معاينات حية قبل التسليم.
           </p>
         </div>
-        <button onclick="addToCart('برمجة مشروع مخصص (بوت ديسكورد أو لعبة)')" class="shrink-0 px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-black text-xs sm:text-sm shadow-lg shadow-blue-600/30 transition">
-          اطلب برمجة مشروعك الآن 💻
-        </button>
-      </div>
-    </section>
-
-    <!-- ======================================================================
-         4. REVIEWS VIEW (#reviews)
-    ====================================================================== -->
-    <section id="view-reviews" class="view-section">
-      <div class="text-center mb-8">
-        <h1 class="text-3xl sm:text-4xl font-black text-white">تقييمات وآراء عملائنا</h1>
-        <p class="text-slate-400 text-sm font-semibold mt-1.5">ثقة آلاف العملاء في خدمات ديسكورد والبرمجة</p>
+        <a href="https://discord.com/users/853351545013272596" target="_blank" rel="noopener noreferrer" class="mt-5 block text-center py-2.5 rounded-xl bg-[#5865F2] hover:bg-[#4752C4] text-white font-extrabold text-xs transition">
+          فتح حساب ديسكورد
+        </a>
       </div>
 
-      <div class="bento-tile tile-amber cursor-default mb-8 py-8 px-6 flex flex-col md:flex-row items-center justify-center gap-6 md:gap-12 text-center">
+      <!-- WhatsApp Direct -->
+      <div class="cyber-card p-6 flex flex-col justify-between text-start">
         <div>
-          <div class="text-5xl sm:text-6xl font-black text-white drop-shadow-[0_0_25px_rgba(255,255,255,0.4)]" dir="ltr">5000+</div>
-          <div class="flex items-center justify-center gap-1 text-amber-400 text-xl mt-2">
-            <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
-          </div>
+          <div class="w-12 h-12 rounded-2xl bg-emerald-500/15 border border-emerald-500/40 flex items-center justify-center text-emerald-400 text-2xl mb-4">📱</div>
+          <h3 class="text-xl font-black text-white">تواصل واتساب</h3>
+          <p class="font-mono-code text-xs text-zinc-400 mt-1" dir="ltr">+20 112 102 0801</p>
+          <p class="text-xs text-zinc-400 mt-3 leading-relaxed">
+            للتواصل السريع، الاتفاق على مدة التنفيذ، واستلام ملفات المشاريع والدعم الفني.
+          </p>
         </div>
-        <p class="text-sm sm:text-base font-bold text-slate-200 max-w-md leading-relaxed">
-          تقييمات حقيقية موثقة من عملائنا — أكثر من +400 عميل وأصحاب سيرفرات يثقون في برمجيات جحيم.
-        </p>
+        <a href="https://wa.me/201121020801" target="_blank" rel="noopener noreferrer" class="mt-5 block text-center py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold text-xs transition">
+          محادثة واتساب مباشرة
+        </a>
       </div>
 
-      <div id="fullReviewsGrid" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
-    </section>
-
-    <!-- ======================================================================
-         5. COMMUNITY VIEW (#community)
-    ====================================================================== -->
-    <section id="view-community" class="view-section">
-      <div class="text-center mb-9">
-        <h1 class="text-3xl sm:text-4xl font-black text-white">مجتمع جحيم للمبرمجين</h1>
-        <p class="text-slate-400 text-sm font-semibold mt-1.5">انضم لسيرفرنا الرسمي لمتابعة أحدث المشاريع البرمجية وطلبات التطوير</p>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-        <div class="pro-card p-7 flex items-center justify-between gap-5">
-          <div class="flex-1 text-start">
-            <h3 class="text-2xl font-black text-white mb-2">سيرفر المطورين الرسمي</h3>
-            <p class="text-xs text-slate-300 leading-relaxed mb-4">
-              لطلب برمجة البوتات والألعاب، تجربة المشاريع الحية، والدعم الفني المباشر.
-            </p>
-            <div class="space-y-1.5 text-xs font-bold mb-5">
-              <div class="flex items-center gap-2 text-slate-200"><span>👥</span><span>1,283 عضو</span></div>
-              <div class="flex items-center gap-2 text-emerald-400"><span class="w-2 h-2 rounded-full bg-emerald-500"></span><span>242 متصل الآن</span></div>
-            </div>
-            <a href="https://discord.gg/ja7eem" target="_blank" rel="noopener noreferrer"
-              class="block text-center w-full py-2.5 px-5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-xs shadow-lg shadow-blue-600/30 transition">
-              انضم للسيرفر الآن
-            </a>
-          </div>
-          <div class="w-24 h-24 rounded-2xl bg-gradient-to-br from-sky-900/60 to-[#060b17] border border-sky-500/30 flex items-center justify-center shrink-0">
-            <span class="text-3xl font-black text-sky-400">J7</span>
+      <!-- Supported Payment Gateways -->
+      <div class="cyber-card p-6 flex flex-col justify-between text-start">
+        <div>
+          <div class="w-12 h-12 rounded-2xl bg-[#00f5d4]/15 border border-[#00f5d4]/40 flex items-center justify-center text-[#00f5d4] text-2xl mb-4">💳</div>
+          <h3 class="text-xl font-black text-white">وسائل الدفع المقبولة</h3>
+          <p class="text-xs text-zinc-400 mt-2 leading-relaxed">
+            طرق دفع متنوعة وسهلة داخل مصر وخارجها:
+          </p>
+          <div class="flex flex-wrap gap-1.5 mt-4">
+            <span class="text-[11px] bg-white/5 border border-white/10 px-2.5 py-1 rounded-lg">فودافون كاش</span>
+            <span class="text-[11px] bg-white/5 border border-white/10 px-2.5 py-1 rounded-lg">إنستا باي</span>
+            <span class="text-[11px] bg-white/5 border border-white/10 px-2.5 py-1 rounded-lg">أورنج / وي كاش</span>
+            <span class="text-[11px] bg-white/5 border border-white/10 px-2.5 py-1 rounded-lg font-mono-code">USDT / LTC</span>
           </div>
         </div>
-
-        <div class="pro-card p-7 flex items-center justify-between gap-5">
-          <div class="flex-1 text-start">
-            <h3 class="text-2xl font-black text-white mb-2">صفحة جحيم للبرمجيات</h3>
-            <p class="text-xs text-slate-300 leading-relaxed mb-6">
-              استوديو متخصص في تطوير بوتات ديسكورد، لوحات التحكم، وبرمجة الألعاب — جودة واحترافية.
-            </p>
-            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer"
-              class="block text-center w-full py-2.5 px-5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-xs shadow-lg shadow-blue-600/30 transition">
-              تابعنا على فيسبوك
-            </a>
-          </div>
-          <div class="w-24 h-24 rounded-2xl bg-gradient-to-br from-blue-900/60 to-[#060b17] border border-blue-500/30 flex items-center justify-center shrink-0">
-            <span class="text-3xl font-black text-blue-400">J7</span>
-          </div>
+        <div class="mt-5 pt-3 border-t border-white/10 text-[11px] font-bold text-[#00f5d4]">
+          ✓ تسليم السورس كود الكامل عند الانتهاء
         </div>
       </div>
     </section>
 
-    <!-- ======================================================================
-         6. FAQ VIEW (#faq)
-    ====================================================================== -->
-    <section id="view-faq" class="view-section">
-      <div class="text-center mb-9">
-        <h1 class="text-3xl sm:text-4xl font-black text-white">الأسئلة الشائعة</h1>
-        <p class="text-slate-400 text-sm font-semibold mt-1.5">كل ما تحتاج معرفته حول طلبات البرمجة والتطوير</p>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-5 max-w-4xl mx-auto">
-        <div class="pro-card p-6 flex items-center justify-between gap-4">
-          <div class="text-start">
-            <h3 class="text-lg font-black text-white mb-1.5">إزاي أطلب برمجة بوت أو لعبة؟</h3>
-            <p class="text-xs text-slate-300 leading-relaxed">
-              تقدر تختار نوع المشروع من قسم "خدمات البرمجة" أو تتواصل معايا مباشرة على ديسكورد أو واتساب وتشرح فكرتك.
-            </p>
-          </div>
-          <div class="w-12 h-12 rounded-2xl bg-blue-950 border border-blue-500/30 flex items-center justify-center text-sky-400 font-black text-lg shrink-0">؟</div>
-        </div>
-
-        <div class="pro-card p-6 flex items-center justify-between gap-4">
-          <div class="text-start">
-            <h3 class="text-lg font-black text-white mb-1.5">هل بستلم السورس كود الكامل؟</h3>
-            <p class="text-xs text-slate-300 leading-relaxed">
-              نعم، بتستلم ملفات المشروع بالكامل (Source Code) نظيفة ومرتبة مع شرح طريقة التشغيل أو رفعه على الاستضافة.
-            </p>
-          </div>
-          <div class="w-12 h-12 rounded-2xl bg-blue-950 border border-blue-500/30 flex items-center justify-center text-sky-400 font-black text-lg shrink-0">؟</div>
-        </div>
-
-        <div class="pro-card p-6 flex items-center justify-between gap-4">
-          <div class="text-start">
-            <h3 class="text-lg font-black text-white mb-1.5">مدة التنفيذ بتكون قد إيه؟</h3>
-            <p class="text-xs text-slate-300 leading-relaxed">
-              بتتحدد حسب حجم المشروع والمميزات المطلوبة، وبنتفق على موعد التسليم الدقيق قبل بدء البرمجة.
-            </p>
-          </div>
-          <div class="w-12 h-12 rounded-2xl bg-blue-950 border border-blue-500/30 flex items-center justify-center text-sky-400 font-black text-lg shrink-0">؟</div>
-        </div>
-
-        <div class="pro-card p-6 flex items-center justify-between gap-4">
-          <div class="text-start">
-            <h3 class="text-lg font-black text-white mb-1.5">إزاي أتأكد إني بتعامل مع الحساب الأصلي؟</h3>
-            <p class="text-xs text-slate-300 leading-relaxed">
-              تأكد دائماً من الـ ID الرسمي الخاص بي على ديسكورد:
-              <button onclick="copyText('853351545013272596')" class="font-mono font-black text-sky-400 hover:underline mt-1 block" dir="ltr">853351545013272596 📋</button>
-            </p>
-          </div>
-          <div class="w-12 h-12 rounded-2xl bg-blue-950 border border-blue-500/30 flex items-center justify-center text-sky-400 font-black text-lg shrink-0">؟</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ======================================================================
-         7. CONTACT VIEW (#contact)
-    ====================================================================== -->
-    <section id="view-contact" class="view-section">
-      <div class="text-center mb-9">
-        <h1 class="text-3xl sm:text-4xl font-black text-white">تواصل معي لبدء مشروعك</h1>
-        <p class="text-slate-400 text-sm font-semibold mt-1.5">اختار الطريقة المناسبة ليك لمناقشة تفاصيل البوت أو اللعبة</p>
-        <div id="selectedOrderBanner" class="hidden mt-4 inline-block bg-blue-600/20 border border-blue-500/40 text-sky-300 text-xs font-bold px-5 py-2.5 rounded-full"></div>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-        <!-- Discord Card -->
-        <div class="pro-card p-7 flex items-center justify-between gap-5">
-          <div class="flex-1 text-start">
-            <h3 class="text-2xl font-black text-white mb-1">ديسكورد</h3>
-            <button id="contactDiscordTag" onclick="copyText('853351545013272596')" class="text-xs font-bold text-slate-400 hover:text-sky-400 mb-3 inline-block" dir="ltr">Ja7eem (853351545013272596) 📋</button>
-            <p class="text-xs text-slate-300 leading-relaxed mb-5">
-              <strong class="text-white">للتواصل السريع:</strong> اشرح فكرة البوت أو اللعبة اللي محتاجها ونتفق على التفاصيل فوراً.
-            </p>
-            <a href="https://discord.com/users/853351545013272596" target="_blank" rel="noopener noreferrer"
-              class="block text-center w-full py-3 px-5 rounded-xl bg-[#5865F2] hover:bg-[#4752C4] text-white font-extrabold text-xs shadow-lg shadow-indigo-600/30 transition">
-              افتح حسابي على ديسكورد
-            </a>
-          </div>
-          <div class="w-24 h-24 rounded-2xl bg-[#060b17] border border-indigo-500/30 flex items-center justify-center shrink-0">
-            <svg class="w-14 h-14 text-[#5865F2]" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994.021-.041.001-.09-.041-.106a13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.028z"/>
-            </svg>
-          </div>
-        </div>
-
-        <!-- WhatsApp Card -->
-        <div class="pro-card p-7 flex items-center justify-between gap-5">
-          <div class="flex-1 text-start">
-            <h3 class="text-2xl font-black text-white mb-1">واتساب</h3>
-            <button onclick="copyText('01121020801')" class="text-xs font-bold text-slate-400 hover:text-emerald-400 mb-3 inline-block" dir="ltr">01121020801 📋</button>
-            <p class="text-xs text-slate-300 leading-relaxed mb-5">
-              <strong class="text-white">للتواصل الفوري:</strong> متابعة الطلبات، إرسال إيصالات الدفع، والاستفسارات المباشرة.
-            </p>
-            <a id="whatsappActionLink" href="https://wa.me/201121020801" target="_blank" rel="noopener noreferrer"
-              class="block text-center w-full py-3 px-5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs shadow-lg shadow-emerald-600/30 transition">
-              تواصل عبر واتساب الآن
-            </a>
-          </div>
-          <div class="w-24 h-24 rounded-2xl bg-[#060b17] border border-emerald-500/30 flex items-center justify-center shrink-0">
-            <svg class="w-14 h-14 text-[#25D366]" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.274.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.1.824zM12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2.546 22l4.951-.878A9.955 9.955 0 0 0 12 22c5.523 0 10-4.477 10-10S17.523 2 12 2z"/>
-            </svg>
-          </div>
-        </div>
-      </div>
-    </section>
   </main>
 
-  <!-- Order Cart Drawer Modal -->
-  <div id="cartDrawer" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
-    <div class="pro-card max-w-md w-full p-6 relative">
-      <button onclick="closeCartDrawer()" class="absolute top-4 left-4 w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center font-bold">✕</button>
-      <h3 class="text-xl font-black text-white mb-1 text-start">🛒 سلة طلباتك</h3>
-      <p class="text-xs text-slate-400 mb-4 text-start">راجع المنتجات المختارة وأرسل طلبك بضغطة واحدة</p>
-
-      <div id="cartItemsContainer" class="space-y-2 max-h-60 overflow-y-auto mb-5"></div>
-
-      <div class="grid grid-cols-2 gap-2.5">
-        <button onclick="checkoutViaWhatsApp()" class="py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs transition">
-          إرسال عبر واتساب
-        </button>
-        <button onclick="checkoutViaDiscord()" class="py-2.5 px-4 rounded-xl bg-[#5865F2] hover:bg-[#4752C4] text-white font-extrabold text-xs transition">
-          نسخ الطلب لديسكورد
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Bottom Floating Controls -->
-  <div class="fixed bottom-5 right-5 z-40">
-    <button onclick="switchView('contact')" class="flex items-center gap-2 bg-[#5865F2] hover:bg-[#4752C4] text-white font-extrabold text-xs sm:text-sm py-3 px-5 rounded-full shadow-[0_10px_28px_rgba(88,101,242,0.45)] transition transform hover:scale-105">
-      <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-        <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994.021-.041.001-.09-.041-.106a13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.028z"/>
-      </svg>
-      <span data-ar="تواصل معي" data-en="Contact Me">تواصل معي</span>
-    </button>
-  </div>
-
-  <!-- Bottom-Left Language Switcher + Back Button -->
-  <div class="fixed bottom-5 left-5 z-40 flex items-center gap-2.5">
-    <button onclick="toggleLanguage()" id="langBtn" class="w-10 h-10 rounded-full bg-[#0c1428]/95 hover:bg-[#152242] border border-slate-700 text-white font-black text-xs flex items-center justify-center shadow-lg transition">
-      EN
-    </button>
-
-    <button id="backBtn" onclick="switchView('home')" class="hidden items-center gap-1.5 bg-[#0c1428]/95 hover:bg-[#152242] border border-blue-500/40 text-white font-extrabold text-xs py-2.5 px-4 rounded-full shadow-lg transition">
-      <span>‹</span>
-      <span data-ar="رجوع" data-en="Back">رجوع</span>
-    </button>
-  </div>
-
   <!-- Toast Notification -->
-  <div id="toast" class="fixed top-20 left-1/2 -translate-x-1/2 bg-[#0f172a] border border-blue-500/60 text-white text-xs font-bold px-5 py-2.5 rounded-full shadow-2xl opacity-0 pointer-events-none transition-all duration-300 z-50">
+  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-[#090b10] border border-[#00f5d4] text-white text-xs font-bold px-5 py-2.5 rounded-full shadow-2xl opacity-0 pointer-events-none transition-all duration-300 z-50">
     تم!
   </div>
 
@@ -817,169 +444,337 @@
     const WHATSAPP_NUMBER = "201121020801";
     let currentLang = "ar";
     let soundEnabled = false;
-    let dhikrIndex = 0;
-    let cart = [];
+    let ambientSynth = null;
+    let bassSynth = null;
+    let musicLoop = null;
+    let bassLoop = null;
 
-    const dhikrList = [
-      "لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ",
-      "سُبْحَانَ اللَّهِ وَبِحَمْدِهِ، سُبْحَانَ اللَّهِ الْعَظِيمِ",
-      "اللَّهُمَّ صَلِّ وَسَلِّمْ وَبَارِكْ عَلَى نَبِيِّنَا مُحَمَّدٍ ﷺ",
-      "أَسْتَغْفِرُ اللَّهَ الْعَظِيمَ الَّذِي لَا إِلَهَ إِلَّا هُوَ الْحَيَّ الْقَيُّومَ وَأَتُوبُ إِلَيْهِ"
+    const SERVICES_DATA = [
+      {
+        category: "bots",
+        icon: "🛡️",
+        badge: "NODE.JS / PYTHON",
+        title: "بوتات الحماية والإدارة (Anti-Nuke & Mod)",
+        desc: "برمجة بوتات حماية السيرفرات من التخريب والسبام، أنظمة تذاكر احترافية (Tickets)، لوجات مفصلة، وأوامر سلاش سريعة.",
+        optionValue: "بوت ديسكورد متكامل (Discord Bot)"
+      },
+      {
+        category: "bots",
+        icon: "⚔️",
+        badge: "GAMING BOTS",
+        title: "بوتات الألعاب والاقتصاد والـ XP",
+        desc: "برمجة أنظمة مستويات (Levels)، متاجر عملات افتراضية، ألعاب تفاعلية داخل الشات، وتوزيع رتب تلقائية.",
+        optionValue: "بوت ديسكورد متكامل (Discord Bot)"
+      },
+      {
+        category: "web",
+        icon: "🎛️",
+        badge: "FULL-STACK WEB",
+        title: "لوحات تحكم ويب للبوتات (Admin Dashboards)",
+        desc: "تصميم وبرمجة لوحة تحكم ويب خاصة ببوتك للتحكم في الإعدادات والأوامر والأعضاء مباشرة من المتصفح.",
+        optionValue: "بوت ديسكورد + لوحة تحكم ويب (Bot + Dashboard)"
+      },
+      {
+        category: "web",
+        icon: "🔗",
+        badge: "OAUTH2 & SQLITE",
+        title: "أنظمة ربط OAuth2 وقواعد البيانات",
+        desc: "ربط حسابات الأعضاء عبر Discord OAuth2 الرسمي لحفظ بياناتهم وضمهم للسيرفرات الاحتياطية وتفعيل الرتب تلقائياً.",
+        optionValue: "بوت ديسكورد + لوحة تحكم ويب (Bot + Dashboard)"
+      },
+      {
+        category: "games",
+        icon: "🎮",
+        badge: "2D / 3D WEBGL",
+        title: "تطوير وبرمجة الألعاب (2D & 3D Games)",
+        desc: "برمجة ألعاب متصفح وموبايل تفاعلية بمحركات HTML5 Canvas و Three.js مع فيزياء حركية ومؤثرات بصرية قوية.",
+        optionValue: "برمجة لعبة 2D / 3D (Game Development)"
+      },
+      {
+        category: "bots",
+        icon: "⚡",
+        badge: "CUSTOM CODE",
+        title: "تطوير وإصلاح كود البوتات القائمة",
+        desc: "تحديث إصدارات Discord.js، إصلاح الأخطاء البرمجية، تحسين سرعة الاستجابة، وإضافة ميزات جديدة لكودك الحالي.",
+        optionValue: "تعديل أو إصلاح كود بوت قائم (Fix & Upgrade)"
+      }
     ];
 
-    // Pure Programming & Game Development Services Only
-    const storeProducts = [
-      { id: "bot-admin-security", cat: "discord_bots", badge: "الأكثر طلباً", icon: "🛡️", title: "برمجة بوت حماية وإدارة متكامل", sub: "Node.js / Discord.js v14", desc: "برمجة بوت إدارة وحماية للسيرفر (Anti-Nuke، رتب تلقائية، تذاكر، لوجات، أوامر سلاش) بكود نظيف وسريع." },
-      { id: "bot-gaming-economy", cat: "discord_bots", badge: "تفاعلي", icon: "🎲", title: "برمجة بوت ألعاب واقتصاد للسيرفر", sub: "XP • Levels • Mini-Games", desc: "برمجة أنظمة نقاط، متجر داخلي، ألعاب جماعية وتفاعلية للأعضاء داخل ديسكورد مع حفظ البيانات." },
-      { id: "bot-custom-idea", cat: "discord_bots", badge: "حسب الطلب", icon: "🤖", title: "برمجة بوت ديسكورد بفكرة خاصة", sub: "Node.js أو Python من الصفر", desc: "تنفيذ أي فكرة بوت مخصصة لمجتمعك أو كلانك (ربط APIs خارجية، أنظمة كلانات، بطولات) بدقة عالية." },
-      { id: "web-dashboard", cat: "dashboards", badge: "احترافي", icon: "🎛️", title: "برمجة لوحة تحكم ويب للبوت (Dashboard)", sub: "Full-Stack Web Control Panel", desc: "تصميم وبرمجة لوحة تحكم ويب متكاملة للتحكم في إعدادات البوت والأوامر والأعضاء من المتصفح بسهولة." },
-      { id: "oauth2-system", cat: "integrations", badge: "أمان وربط", icon: "🔗", title: "برمجة نظام ربط وتفعيل Discord OAuth2", sub: "SQLite / MongoDB + Web Callback", desc: "نظام تفعيل الأعضاء عبر الموقع الرسمي لديسكورد مع قاعدة بيانات آمنة ولوحة إدارة للمالك." },
-      { id: "game-2d-web", cat: "game_dev", badge: "تطوير ألعاب", icon: "🎮", title: "تطوير وبرمجة ألعاب 2D / Web Games", sub: "HTML5 Canvas / JS / Game Logic", desc: "تصميم وبرمجة ألعاب متصفح وموبايل تفاعلية بأنظمة نقاط، مراحل، ومؤثرات بصرية وصوتية متكاملة." },
-      { id: "game-3d-sim", cat: "game_dev", badge: "3D & Physics", icon: "🕹️", title: "برمجة ألعاب ومحاكاة ثلاثية الأبعاد 3D", sub: "Three.js / WebGL / Multiplayer", desc: "بناء تجارب وألعاب 3D تفاعلية فيزيائية بأداء سلس ودعم كامل للكمبيوتر والهاتف." },
-      { id: "bot-hosting-opt", cat: "integrations", badge: "تحسين الأداء", icon: "⚡", title: "تطوير وإصلاح أخطاء البوتات القائمة", sub: "Debugging • Refactoring • VPS Setup", desc: "مراجعة كود بوتك الحالي، حل مشاكل التهنيج والـ Rate-Limit، وتحديثه لأحدث إصدار من Discord.js." }
-    ];
+    function renderServices(filter = "all") {
+      const grid = document.getElementById("servicesGrid");
+      if (!grid) return;
+      const items = filter === "all" ? SERVICES_DATA : SERVICES_DATA.filter(s => s.category === filter);
 
-    function renderStoreProducts(filter = "all") {
-      const grid = document.getElementById("storeProductsGrid");
-      const filtered = filter === "all" ? storeProducts : storeProducts.filter(p => p.cat === filter);
-
-      grid.innerHTML = filtered.map(p => `
-        <div class="pro-card p-6 flex flex-col justify-between">
+      grid.innerHTML = items.map(s => `
+        <div class="cyber-card p-6 flex flex-col justify-between text-start">
           <div>
             <div class="flex items-center justify-between mb-4">
-              <span class="text-[11px] font-extrabold px-2.5 py-1 rounded-full bg-blue-500/15 text-sky-300 border border-blue-400/25">${p.badge}</span>
-              <div class="w-12 h-12 rounded-2xl bg-[#060b17] border border-slate-800 flex items-center justify-center text-2xl">${p.icon}</div>
+              <div class="w-12 h-12 rounded-2xl bg-[#00f5d4]/10 border border-[#00f5d4]/30 flex items-center justify-center text-2xl">${s.icon}</div>
+              <span class="font-mono-code text-[10px] px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-[#00f5d4] font-bold">${s.badge}</span>
             </div>
-            <h3 class="text-xl font-black text-white text-start">${p.title}</h3>
-            <p class="text-xs font-bold text-sky-400 mt-1 text-start">${p.sub}</p>
-            <p class="text-xs text-slate-300 leading-relaxed mt-3 mb-5 text-start">${p.desc}</p>
+            <h3 class="text-lg font-black text-white">${s.title}</h3>
+            <p class="text-xs text-zinc-400 mt-2 leading-relaxed">${s.desc}</p>
           </div>
-
-          <div class="flex items-center gap-2 pt-3 border-t border-slate-800/80">
-            <button onclick="orderDirect('${p.title.replace(/'/g, "\\'")}')" class="flex-1 py-2.5 px-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-xs shadow-lg shadow-blue-600/25 transition">
-              اطلب البرمجة الآن ⚡
-            </button>
-            <button onclick="addToCart('${p.title.replace(/'/g, "\\'")}')" title="أضف لطلباتي" class="py-2.5 px-3.5 rounded-xl bg-[#060b17] hover:bg-slate-800 border border-slate-700 text-slate-200 font-extrabold text-xs transition">
-              + 🛒
-            </button>
-          </div>
+          <button onclick="selectServiceForBuilder('${s.optionValue}')" class="mt-5 w-full py-2.5 rounded-xl bg-white/5 hover:bg-[#00f5d4] hover:text-black border border-white/10 text-white font-extrabold text-xs transition">
+            طلب هذه الخدمة ⚡
+          </button>
         </div>
       `).join("");
+      attachCardSpotlights();
     }
 
-    function filterStore(cat, btnEl) {
+    function filterServices(cat, btn) {
       playClick();
-      document.querySelectorAll(".store-tab").forEach(b => {
-        b.className = "store-tab px-4 py-2 rounded-xl bg-[#0c1428] border border-slate-800 text-slate-300 hover:text-white text-xs font-extrabold transition";
+      document.querySelectorAll(".srv-tab").forEach(b => {
+        b.className = "srv-tab px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-zinc-300 hover:text-white font-bold text-xs transition";
       });
-      if (btnEl) {
-        btnEl.className = "store-tab px-4 py-2 rounded-xl bg-blue-600 text-white text-xs font-extrabold transition";
+      if (btn) {
+        btn.className = "srv-tab px-4 py-2 rounded-xl bg-[#00f5d4] text-black font-black text-xs transition";
       }
-      renderStoreProducts(cat);
+      renderServices(cat);
     }
 
-    // Cart & Direct Order Logic
-    function addToCart(itemName) {
+    function selectServiceForBuilder(optionVal) {
       playClick();
-      cart.push(itemName);
-      document.getElementById("cartCountBadge").textContent = cart.length;
-      showToast(`🛒 تمت إضافة "${itemName}" إلى طلباتك`);
+      const select = document.getElementById("cfgType");
+      if (select) select.value = optionVal;
+      updateOrderPreview();
+      document.getElementById("configurator")?.scrollIntoView({ behavior: "smooth" });
     }
 
-    function openCartDrawer() {
+    function updateOrderPreview() {
+      const type = document.getElementById("cfgType")?.value || "";
+      const lang = document.getElementById("cfgLang")?.value || "";
+      const notes = document.getElementById("cfgNotes")?.value.trim() || "لم يتم إضافة تفاصيل إضافية بعد";
+
+      const payload = {
+        studio: "JA7EEM.DEV",
+        project_type: type,
+        stack: lang,
+        source_code_included: true,
+        requirements: notes
+      };
+
+      const box = document.getElementById("orderPayloadPreview");
+      if (box) box.textContent = JSON.stringify(payload, null, 2);
+    }
+
+    function buildOrderMessage() {
+      const type = document.getElementById("cfgType")?.value || "";
+      const lang = document.getElementById("cfgLang")?.value || "";
+      const notes = document.getElementById("cfgNotes")?.value.trim() || "لا يوجد";
+      return `السلام عليكم JA7EEM.DEV، أريد طلب مشروع برمجي:\n• نوع المشروع: ${type}\n• التقنية: ${lang}\n• التفاصيل: ${notes}`;
+    }
+
+    function sendOrderWhatsApp() {
       playClick();
-      const container = document.getElementById("cartItemsContainer");
-      if (cart.length === 0) {
-        container.innerHTML = `<div class="text-center text-xs text-slate-400 py-6">سلة طلباتك فارغة حالياً — اختر منتجاً من المتجر أولاً</div>`;
-      } else {
-        container.innerHTML = cart.map((item, idx) => `
-          <div class="bg-[#060b17] border border-slate-800 rounded-xl px-3.5 py-2.5 flex items-center justify-between gap-2 text-xs">
-            <span class="font-bold text-white text-start">${idx + 1}. ${item}</span>
-            <button onclick="removeFromCart(${idx})" class="text-rose-400 hover:text-rose-300 font-black px-2">✕</button>
-          </div>
-        `).join("");
-      }
-      const drawer = document.getElementById("cartDrawer");
-      drawer.classList.remove("hidden");
-      drawer.classList.add("flex");
+      const msg = encodeURIComponent(buildOrderMessage());
+      window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`, "_blank", "noopener,noreferrer");
     }
 
-    function closeCartDrawer() {
-      const drawer = document.getElementById("cartDrawer");
-      drawer.classList.add("hidden");
-      drawer.classList.remove("flex");
-    }
-
-    function removeFromCart(index) {
-      cart.splice(index, 1);
-      document.getElementById("cartCountBadge").textContent = cart.length;
-      openCartDrawer();
-    }
-
-    function checkoutViaWhatsApp() {
-      if (cart.length === 0) return showToast("⚠️ أضف منتجاً واحداً على الأقل أولاً");
-      const text = `السلام عليكم Ja7eem، أريد طلب المنتجات التالية من المتجر:\n- ${cart.join("\n- ")}`;
-      window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`, "_blank");
-    }
-
-    function checkoutViaDiscord() {
-      if (cart.length === 0) return showToast("⚠️ أضف منتجاً واحداً على الأقل أولاً");
-      const text = `السلام عليكم Ja7eem، أريد طلب:\n- ${cart.join("\n- ")}`;
-      copyText(text);
-      closeCartDrawer();
-      switchView("contact");
-    }
-
-    function orderDirect(productName) {
+    function sendOrderDiscord() {
       playClick();
-      const banner = document.getElementById("selectedOrderBanner");
-      banner.textContent = `⚡ المنتج المختار: ${productName} — اضغط على واتساب أو ديسكورد لإتمام الطلب فوراً`;
-      banner.classList.remove("hidden");
-
-      const waBtn = document.getElementById("whatsappActionLink");
-      if (waBtn) {
-        waBtn.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent("السلام عليكم Ja7eem، أريد طلب: " + productName)}`;
-      }
-      switchView("contact");
+      copyText(buildOrderMessage());
+      showToast("✅ تم نسخ تفاصيل الطلب! افتح المحادثة في ديسكورد وألصقها");
+      setTimeout(() => {
+        window.open(`https://discord.com/users/${DISCORD_USER_ID}`, "_blank", "noopener,noreferrer");
+      }, 700);
     }
 
-    // Sound Effects
-    function playClick() {
-      if (!soundEnabled) return;
+    function runTerminalDemo() {
+      playClick();
+      const out = document.getElementById("terminalOutput");
+      if (!out) return;
+      const lines = [
+        `<div class="text-[#00f5d4]">$ npm run build:ja7eem-engine</div>`,
+        `<div class="text-zinc-400">[1/3] Compiling Discord Slash Commands & OAuth2...</div>`,
+        `<div class="text-zinc-400">[2/3] Initializing WebGL Shaders & Game Loop (60 FPS)...</div>`,
+        `<div class="text-emerald-400 font-bold">[3/3] BUILD SUCCESSFUL — Latency: 12ms ✓</div>`
+      ];
+      out.innerHTML += lines.join("");
+      out.scrollTop = out.scrollHeight;
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById("toast");
+      if (!t) return;
+      t.textContent = msg;
+      t.style.opacity = "1";
+      clearTimeout(window._toastTimer);
+      window._toastTimer = setTimeout(() => { t.style.opacity = "0"; }, 2800);
+    }
+
+    function copyText(text) {
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      document.body.removeChild(ta);
+      showToast(`📋 تم النسخ: ${text}`);
+    }
+
+    async function initAmbientTrack() {
+      if (ambientSynth) return;
+
+      // فلتر لتنعيم الترددات العالية وجعل الصوت دافئاً وهادئاً جداً
+      const warmFilter = new Tone.Filter({
+        frequency: 620,
+        type: "lowpass",
+        rolloff: -24
+      }).toDestination();
+
+      const reverb = new Tone.Reverb({
+        decay: 7.5,
+        wet: 0.65
+      }).connect(warmFilter);
+
+      ambientSynth = new Tone.PolySynth(Tone.Synth, {
+        oscillator: { type: "sine" },
+        envelope: {
+          attack: 2.2,
+          decay: 1.5,
+          sustain: 0.5,
+          release: 4.0
+        },
+        volume: -24
+      }).connect(reverb);
+
+      // كوردات بيانو/باد دافئة وبطيئة جداً (Lo-Fi Lounge / Soft Ambient)
+      const chords = [
+        ["F3", "A3", "C4", "E4"],
+        ["E3", "G3", "B3", "D4"],
+        ["D3", "F3", "A3", "C4"],
+        ["C3", "E3", "G3", "B3"]
+      ];
+      let step = 0;
+
+      Tone.Transport.bpm.value = 54;
+
+      musicLoop = new Tone.Loop((time) => {
+        const chord = chords[step % chords.length];
+        ambientSynth.triggerAttackRelease(chord, "2m", time);
+        step++;
+      }, "2m");
+    }
+
+    async function toggleSound() {
+      const btn = document.getElementById("soundBtn");
+      const icon = document.getElementById("soundIcon");
+      const label = document.getElementById("soundLabel");
+
       try {
-        const ctx = new (window.AudioContext || window.webkitAudioContext)();
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = "sine";
-        osc.frequency.setValueAtTime(560, ctx.currentTime);
-        gain.gain.setValueAtTime(0.04, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.07);
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.start();
-        osc.stop(ctx.currentTime + 0.07);
+        await Tone.start();
+        await initAmbientTrack();
+
+        soundEnabled = !soundEnabled;
+        if (soundEnabled) {
+          musicLoop.start(0);
+          Tone.Transport.start();
+          icon.textContent = "🎵";
+          if (label) {
+            label.textContent = "ON";
+            label.classList.add("text-[#00f5d4]");
+          }
+          if (btn) btn.classList.add("border-[#00f5d4]/50", "bg-[#00f5d4]/10");
+          showToast(currentLang === "ar" ? "🎵 تم تشغيل الموسيقى الهادئة" : "🎵 Soft Ambient Music Enabled");
+        } else {
+          Tone.Transport.pause();
+          icon.textContent = "🔇";
+          if (label) {
+            label.textContent = "AUDIO";
+            label.classList.remove("text-[#00f5d4]");
+          }
+          if (btn) btn.classList.remove("border-[#00f5d4]/50", "bg-[#00f5d4]/10");
+          showToast(currentLang === "ar" ? "🔇 تم إيقاف الصوت" : "🔇 Audio Muted");
+        }
       } catch (e) {}
     }
 
-    function toggleSound() {
-      soundEnabled = !soundEnabled;
-      document.getElementById("soundOnIcon").classList.toggle("hidden", !soundEnabled);
-      document.getElementById("soundOffIcon").classList.toggle("hidden", soundEnabled);
-      if (soundEnabled) playClick();
-      showToast(soundEnabled ? "🔊 تم تشغيل المؤثرات الصوتية" : "🔇 تم إيقاف الصوت");
+    function playClick() {
+      // صامت تماماً للحفاظ على الهدوء والرقي أثناء التصفح
     }
 
-    // Live Discord Profile Sync (Lanyard API)
+    async function toggleSound() {
+      const btn = document.getElementById("soundBtn");
+      const icon = document.getElementById("soundIcon");
+      const label = document.getElementById("soundLabel");
+
+      try {
+        await Tone.start();
+        await initAmbientTrack();
+
+        soundEnabled = !soundEnabled;
+        if (soundEnabled) {
+          musicLoop.start(0);
+          Tone.Transport.start();
+          icon.textContent = "🎵";
+          if (label) {
+            label.textContent = "ON";
+            label.classList.add("text-[#00f5d4]");
+          }
+          if (btn) btn.classList.add("border-[#00f5d4]/50", "bg-[#00f5d4]/10");
+          showToast(currentLang === "ar" ? "🎵 تم تشغيل الموسيقى الخلفية الهادئة" : "🎵 Ambient Cyber Music Enabled");
+        } else {
+          Tone.Transport.pause();
+          icon.textContent = "🔇";
+          if (label) {
+            label.textContent = "AUDIO";
+            label.classList.remove("text-[#00f5d4]");
+          }
+          if (btn) btn.classList.remove("border-[#00f5d4]/50", "bg-[#00f5d4]/10");
+          showToast(currentLang === "ar" ? "🔇 تم إيقاف الصوت" : "🔇 Audio Muted");
+        }
+      } catch (e) {}
+    }
+
+    function playClick() {
+      if (!soundEnabled || typeof Tone === "undefined") return;
+      try {
+        const clickSynth = new Tone.Synth({
+          oscillator: { type: "sine" },
+          envelope: { attack: 0.005, decay: 0.06, sustain: 0, release: 0.05 },
+          volume: -22
+        }).toDestination();
+        clickSynth.triggerAttackRelease("G5", "32n");
+      } catch (e) {}
+    }
+
+    function toggleLanguage() {
+      playClick();
+      currentLang = currentLang === "ar" ? "en" : "ar";
+      document.documentElement.lang = currentLang;
+      document.documentElement.dir = currentLang === "ar" ? "rtl" : "ltr";
+      document.getElementById("langBtn").textContent = currentLang === "ar" ? "EN" : "AR";
+
+      document.querySelectorAll("[data-ar]").forEach(el => {
+        el.textContent = el.getAttribute(`data-${currentLang}`);
+      });
+      fetchDiscordRest();
+    }
+
+    function attachCardSpotlights() {
+      document.querySelectorAll(".cyber-card").forEach(card => {
+        card.onmousemove = (e) => {
+          const rect = card.getBoundingClientRect();
+          card.style.setProperty("--mouse-x", `${e.clientX - rect.left}px`);
+          card.style.setProperty("--mouse-y", `${e.clientY - rect.top}px`);
+        };
+      });
+    }
+
+    // Live Discord Profile Sync (Lanyard API + WebSocket)
     function updateDiscordUI(data) {
       if (!data || !data.discord_user) return;
       const user = data.discord_user;
       const status = data.discord_status || "offline";
       const displayName = user.global_name || user.username || "Ja7eem";
+      const usernameTag = user.username ? `@${user.username}` : "";
 
       const heroName = document.getElementById("heroOwnerName");
       const contactTag = document.getElementById("contactDiscordTag");
       if (heroName) heroName.textContent = displayName;
-      if (contactTag) contactTag.textContent = `${displayName} (${DISCORD_USER_ID}) 📋`;
+      if (contactTag) contactTag.textContent = `${displayName} ${usernameTag} (${DISCORD_USER_ID}) 📋`;
 
       if (user.avatar) {
         const ext = user.avatar.startsWith("a_") ? "gif" : "png";
@@ -1006,7 +801,7 @@
         online: { ar: "متصل الآن", en: "Online Now", dot: "bg-emerald-500 shadow-[0_0_8px_#22c55e]", color: "text-emerald-400" },
         idle: { ar: "خامل الآن", en: "Idle", dot: "bg-amber-400 shadow-[0_0_8px_#fbbf24]", color: "text-amber-400" },
         dnd: { ar: "مشغول الآن", en: "Do Not Disturb", dot: "bg-rose-500 shadow-[0_0_8px_#f43f5e]", color: "text-rose-400" },
-        offline: { ar: "غير متصل الآن", en: "Offline Now", dot: "bg-slate-500", color: "text-slate-400" }
+        offline: { ar: "غير متصل الآن", en: "Offline Now", dot: "bg-zinc-500", color: "text-zinc-400" }
       };
       const st = map[status] || map.offline;
 
@@ -1016,7 +811,7 @@
       const heroTxt = document.getElementById("heroStatusText");
 
       if (navDot) navDot.className = `w-2 h-2 rounded-full ${st.dot}`;
-      if (heroDot) heroDot.className = `absolute bottom-0.5 right-0.5 w-4 h-4 rounded-full ${st.dot} border-[3px] border-[#060b17]`;
+      if (heroDot) heroDot.className = `absolute -bottom-1 -right-1 w-4 h-4 rounded-full ${st.dot} border-[3px] border-[#090b10]`;
 
       if (navTxt) {
         navTxt.textContent = currentLang === "ar" ? st.ar.replace(" الآن", "") : st.en.replace(" Now", "");
@@ -1028,135 +823,103 @@
       }
     }
 
-    async function initDiscordSync() {
+    async function fetchDiscordRest() {
       try {
-        const res = await fetch(`https://api.lanyard.rest/v1/users/${DISCORD_USER_ID}`);
+        const res = await fetch(`https://api.lanyard.rest/v1/users/${DISCORD_USER_ID}?t=${Date.now()}`);
         const json = await res.json();
         if (json && json.success && json.data) updateDiscordUI(json.data);
       } catch (e) {}
+    }
+
+    function initDiscordSync() {
+      fetchDiscordRest();
+      setInterval(fetchDiscordRest, 20000);
 
       try {
         const ws = new WebSocket("wss://api.lanyard.rest/socket");
+        let hbTimer = null;
         ws.onmessage = (ev) => {
           const msg = JSON.parse(ev.data);
           if (msg.op === 1) {
             ws.send(JSON.stringify({ op: 2, d: { subscribe_to_id: DISCORD_USER_ID } }));
-            setInterval(() => {
+            hbTimer = setInterval(() => {
               if (ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify({ op: 3 }));
             }, msg.d.heartbeat_interval || 30000);
           } else if (msg.op === 0 && (msg.t === "INIT_STATE" || msg.t === "PRESENCE_UPDATE")) {
             updateDiscordUI(msg.d);
           }
         };
+        ws.onclose = () => {
+          if (hbTimer) clearInterval(hbTimer);
+          setTimeout(initDiscordSync, 5000);
+        };
       } catch (e) {}
     }
 
-    // Navigation
-    function switchView(viewName) {
-      playClick();
-      document.querySelectorAll(".view-section").forEach(el => el.classList.remove("active"));
-      const target = document.getElementById(`view-${viewName}`) || document.getElementById("view-home");
-      target.classList.add("active");
+    // 3D Particle & Wireframe Background (Three.js)
+    function init3DBackground() {
+      const canvas = document.getElementById("bgCanvas");
+      if (!canvas || typeof THREE === "undefined") return;
 
-      document.querySelectorAll(".nav-pill").forEach(btn => {
-        const isMatch = btn.getAttribute("data-nav") === viewName;
-        btn.className = isMatch
-          ? "nav-pill px-3.5 py-2 rounded-xl bg-blue-600/20 text-sky-400 transition"
-          : "nav-pill px-3.5 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 transition";
-      });
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+      camera.position.z = 28;
 
-      const backBtn = document.getElementById("backBtn");
-      if (viewName === "home") {
-        backBtn.classList.add("hidden");
-        backBtn.classList.remove("flex");
-      } else {
-        backBtn.classList.remove("hidden");
-        backBtn.classList.add("flex");
+      const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+      // Floating Wireframe Icosahedron
+      const geo = new THREE.IcosahedronGeometry(9, 1);
+      const mat = new THREE.MeshBasicMaterial({ color: 0x00f5d4, wireframe: true, transparent: true, opacity: 0.12 });
+      const mesh = new THREE.Mesh(geo, mat);
+      mesh.position.set(-8, 2, -5);
+      scene.add(mesh);
+
+      // Particle Field
+      const pCount = 260;
+      const pGeo = new THREE.BufferGeometry();
+      const positions = new Float32Array(pCount * 3);
+      for (let i = 0; i < pCount * 3; i++) {
+        positions[i] = (Math.random() - 0.5) * 70;
       }
+      pGeo.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+      const pMat = new THREE.PointsMaterial({ color: 0x8b5cf6, size: 0.22, transparent: true, opacity: 0.65 });
+      const particles = new THREE.Points(pGeo, pMat);
+      scene.add(particles);
 
-      window.scrollTo({ top: 0, behavior: "smooth" });
-      history.replaceState(null, "", viewName === "home" ? "#" : `#${viewName}`);
-    }
-
-    function nextDhikr() {
-      playClick();
-      dhikrIndex = (dhikrIndex + 1) % dhikrList.length;
-      document.getElementById("dhikrText").textContent = dhikrList[dhikrIndex];
-    }
-
-    function copyText(text) {
-      playClick();
-      const ta = document.createElement("textarea");
-      ta.value = text;
-      document.body.appendChild(ta);
-      ta.select();
-      document.execCommand("copy");
-      document.body.removeChild(ta);
-      showToast(`📋 تم النسخ: ${text}`);
-    }
-
-    function showToast(msg) {
-      const t = document.getElementById("toast");
-      t.textContent = msg;
-      t.classList.remove("opacity-0");
-      t.classList.add("opacity-100");
-      clearTimeout(window._toastTimer);
-      window._toastTimer = setTimeout(() => {
-        t.classList.remove("opacity-100");
-        t.classList.add("opacity-0");
-      }, 2500);
-    }
-
-    function toggleLanguage() {
-      playClick();
-      currentLang = currentLang === "ar" ? "en" : "ar";
-      document.documentElement.lang = currentLang;
-      document.documentElement.dir = currentLang === "ar" ? "rtl" : "ltr";
-      document.getElementById("langBtn").textContent = currentLang === "ar" ? "EN" : "AR";
-
-      document.querySelectorAll("[data-ar][data-en]").forEach(el => {
-        el.textContent = el.getAttribute(`data-${currentLang}`);
+      let mouseX = 0, mouseY = 0;
+      window.addEventListener("mousemove", (e) => {
+        mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+        mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
       });
+
+      window.addEventListener("resize", () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      });
+
+      function animate() {
+        requestAnimationFrame(animate);
+        mesh.rotation.x += 0.002;
+        mesh.rotation.y += 0.003;
+        particles.rotation.y += 0.0008;
+        camera.position.x += (mouseX * 2.5 - camera.position.x) * 0.04;
+        camera.position.y += (-mouseY * 2.5 - camera.position.y) * 0.04;
+        camera.lookAt(scene.position);
+        renderer.render(scene, camera);
+      }
+      animate();
     }
 
-    function renderReviews() {
-      const list = [
-        { name: "AhmedNasser", tag: "DEV", date: "10/28/2026", text: "100% Trust — برمجة البوت والداشبورد فوق الممتاز", color: "text-rose-400", avatar: "https://placehold.co/48x48/0f172a/38bdf8?text=AN" },
-        { name: "! Meda -Gaming", tag: "VIP", date: "10/29/2026", text: "king elmgal da a5oia ❤️", color: "text-red-400", avatar: "https://placehold.co/48x48/0f172a/f43f5e?text=MG" },
-        { name: "KARIM SPAR...", tag: "PK", date: "10/29/2026", text: "اخويا الطرش مبرمج محترم وثقة", color: "text-amber-400", avatar: "https://placehold.co/48x48/0f172a/eab308?text=KS" },
-        { name: "M A R I O", tag: "ZRTH", date: "10/30/2026", text: "sekaa fe ellah nga77 ❤️", color: "text-emerald-400", avatar: "https://placehold.co/48x48/0f172a/22c55e?text=MR" },
-        { name: "Skulls", tag: "EURO", date: "10/31/2026", text: "100% legit — البوت واللعبة شغالين بأعلى كفاءة 😘", color: "text-sky-400", avatar: "https://placehold.co/48x48/0f172a/a855f7?text=SK" },
-        { name: "B O D Y", tag: "SKY", date: "11/02/2026", text: "كود نظيف وتسليم في الموعد بالضبط", color: "text-indigo-400", avatar: "https://placehold.co/48x48/0f172a/3b82f6?text=BD" }
-      ];
-
-      const cardHTML = (r) => `
-        <div onclick="showToast('⭐ ${r.name}: ${r.text}')" class="cursor-pointer bg-[#0a1020]/90 hover:bg-[#0f1830] border border-slate-800/90 hover:border-amber-500/40 rounded-2xl p-3.5 flex items-center gap-3 transition text-start">
-          <img src="${r.avatar}" alt="${r.name}" class="w-10 h-10 rounded-full object-cover border border-slate-700 shrink-0" />
-          <div class="min-w-0 flex-1">
-            <div class="flex items-center gap-1.5">
-              <span class="font-bold text-xs ${r.color} truncate">${r.name}</span>
-              <span class="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 font-bold">${r.tag}</span>
-              <span class="text-[10px] text-slate-500 ms-auto" dir="ltr">${r.date}</span>
-            </div>
-            <p class="text-xs text-slate-200 mt-1 truncate">${r.text}</p>
-          </div>
-        </div>
-      `;
-
-      document.getElementById("homeReviewsRow").innerHTML = list.slice(0, 3).map(cardHTML).join("");
-      document.getElementById("fullReviewsGrid").innerHTML = list.map(cardHTML).join("");
-    }
-
-    window.addEventListener("DOMContentLoaded", () => {
-      renderStoreProducts("all");
-      renderReviews();
+    window.onload = function () {
+      renderServices("all");
+      updateOrderPreview();
+      attachCardSpotlights();
       initDiscordSync();
-
-      const hash = window.location.hash.replace("#", "");
-      if (hash && document.getElementById(`view-${hash}`)) {
-        switchView(hash);
-      }
-    });
+      init3DBackground();
+    };
   </script>
 </body>
 </html>
